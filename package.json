@@ -13,6 +13,7 @@
     "next": "15.3.0",
     "openai": "^4.96.2",
     "react": "^19.0.0",
+    "react-confetti": "^6.4.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {

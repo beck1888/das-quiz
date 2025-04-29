@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import ReactConfetti from 'react-confetti';
 import { Quiz, Question } from '@/types/quiz';
 import Select from '@/components/Select';
 import Lottie from 'lottie-react';
@@ -35,6 +36,7 @@ export default function Home() {
   const [attempt, setAttempt] = useState(1);
   const [previousScores, setPreviousScores] = useState<number[]>([]);
   const [savedQuiz, setSavedQuiz] = useState<Quiz | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
     // Load configuration when component mounts
@@ -212,6 +214,8 @@ export default function Home() {
     const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
     const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
     const previousScore = previousScores.length > 0 ? previousScores[previousScores.length - 1] : null;
+    const scorePercentage = totalAnswered > 0 ? (score/totalAnswered) * 100 : 0;
+    const showConfetti = scorePercentage >= 75;
     const filteredAnswers = answers.filter(answer => {
       const matchesAttempt = answer.attempt === attempt;
       if (!matchesAttempt) return false;
@@ -223,6 +227,7 @@ export default function Home() {
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
+        {showConfetti && <ReactConfetti recycle={false} numberOfPieces={500} />}
         <div className="w-full max-w-2xl space-y-6 glass p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           <div className="text-xl text-center mb-6">
@@ -315,7 +320,7 @@ export default function Home() {
                 alt="New Quiz"
                 className="w-5 h-5"
               />
-              Start New Quiz
+              Make New Quiz
             </button>
           </div>
           
