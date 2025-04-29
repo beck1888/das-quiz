@@ -23,6 +23,7 @@ export default function Home() {
   const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect'>('all');
   const [explanation, setExplanation] = useState<string | null>(null);
   const [loadingExplanation, setLoadingExplanation] = useState(false);
+  const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
 
   const generateQuiz = async () => {
     setAnswers([]);
@@ -37,6 +38,10 @@ export default function Home() {
       const data = await response.json();
       setQuiz(data.quiz);
       setCurrentQuestion(0);
+      // Shuffle answers for the first question
+      if (data.quiz?.questions[0]) {
+        setShuffledAnswers(shuffleAnswers(data.quiz.questions[0]));
+      }
     } catch (error) {
       console.error('Failed to generate quiz:', error);
     }
@@ -88,7 +93,10 @@ export default function Home() {
 
   const handleNext = () => {
     if (currentQuestion < numQuestions - 1) {
-      setCurrentQuestion(curr => curr + 1);
+      const nextQuestion = currentQuestion + 1;
+      setCurrentQuestion(nextQuestion);
+      // Shuffle answers for the next question
+      setShuffledAnswers(shuffleAnswers(quiz!.questions[nextQuestion]));
       setSelectedAnswer(null);
       setShowAnswer(false);
       setExplanation(null);
@@ -234,7 +242,7 @@ export default function Home() {
           <>
             <p className="text-xl mb-6">{quiz.questions[currentQuestion].question}</p>
             <div className="space-y-3">
-              {shuffleAnswers(quiz.questions[currentQuestion]).map((answer, index) => (
+              {shuffledAnswers.map((answer, index) => (
                 <button
                   key={index}
                   onClick={() => handleAnswerSelect(answer)}
