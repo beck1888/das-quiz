@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Quiz, Question } from '@/types/quiz';
+import Select from '@/components/Select';
 
 interface Answer {
   question: string;
@@ -238,27 +239,28 @@ export default function Home() {
             className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="grid grid-cols-2 gap-4">
-            <select
+            <Select
               value={numQuestions}
-              onChange={(e) => setNumQuestions(Number(e.target.value))}
-              className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {config && [...Array(config.settings.questions.max - config.settings.questions.min + 1)].map((_, i) => {
-                const num = i + config.settings.questions.min;
-                return (
-                  <option key={num} value={num}>{num} Questions</option>
-                );
-              })}
-            </select>
-            <select
+              onChange={(value) => setNumQuestions(Number(value))}
+              options={
+                config
+                  ? [...Array(config.settings.questions.max - config.settings.questions.min + 1)].map((_, i) => ({
+                      value: i + config.settings.questions.min,
+                      label: `${i + config.settings.questions.min} Questions`
+                    }))
+                  : []
+              }
+            />
+            <Select
               value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {config?.settings.difficulties.map((level: { id: string, label: string }) => (
-                <option key={level.id} value={level.id}>{level.label}</option>
-              ))}
-            </select>
+              onChange={(value) => setDifficulty(value)}
+              options={
+                config?.settings.difficulties.map((level: { id: string, label: string }) => ({
+                  value: level.id,
+                  label: level.label
+                })) || []
+              }
+            />
           </div>
           <button
             type="submit"
