@@ -5,9 +5,10 @@ import Select from '@/components/Select';
 
 interface Answer {
   question: string;
-  userAnswer: string;
+  userAnswer: string | null;
   correctAnswer: string;
   isCorrect: boolean;
+  skipped: boolean;
 }
 
 export default function Home() {
@@ -22,7 +23,7 @@ export default function Home() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [showSummary, setShowSummary] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect'>('all');
+  const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect' | 'skipped'>('all');
   const [explanation, setExplanation] = useState<string | null>(null);
   const [loadingExplanation, setLoadingExplanation] = useState(false);
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
@@ -79,7 +80,8 @@ export default function Home() {
       question: currentQ.question,
       userAnswer: answer,
       correctAnswer: currentQ.correctAnswer,
-      isCorrect: answer === currentQ.correctAnswer
+      isCorrect: answer === currentQ.correctAnswer,
+      skipped: false
     }]);
     setSelectedAnswer(answer);
     setShowAnswer(true);
@@ -127,6 +129,17 @@ export default function Home() {
   };
 
   const handleNext = () => {
+    if (!selectedAnswer) {
+      // If no answer selected, mark as skipped
+      const currentQ = quiz!.questions[currentQuestion];
+      setAnswers(prev => [...prev, {
+        question: currentQ.question,
+        userAnswer: null,
+        correctAnswer: currentQ.correctAnswer,
+        isCorrect: false,
+        skipped: true
+      }]);
+    }
     if (currentQuestion < numQuestions - 1) {
       const nextQuestion = currentQuestion + 1;
       setCurrentQuestion(nextQuestion);
@@ -165,9 +178,11 @@ export default function Home() {
 
   if (showSummary) {
     const score = answers.filter(a => a.isCorrect).length;
+    const totalAnswered = answers.filter(a => !a.skipped).length;
     const filteredAnswers = answers.filter(answer => {
       if (filter === 'correct') return answer.isCorrect;
-      if (filter === 'incorrect') return !answer.isCorrect;
+      if (filter === 'incorrect') return !answer.isCorrect && !answer.skipped;
+      if (filter === 'skipped') return answer.skipped;
       return true;
     });
 
@@ -176,10 +191,15 @@ export default function Home() {
         <div className="w-full max-w-2xl space-y-6 glass p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           <div className="text-xl text-center mb-6">
-            Your Score: {score}/{numQuestions} ({Math.round((score/numQuestions) * 100)}%)
+            Your Score: {score}/{totalAnswered} ({totalAnswered > 0 ? Math.round((score/totalAnswered) * 100) : 0}%)
+            {answers.some(a => a.skipped) && (
+              <div className="text-sm text-gray-600 mt-1">
+                {answers.filter(a => a.skipped).length} questions skipped
+              </div>
+            )}
           </div>
           
-          <div className="flex gap-3 mb-6">
+          <div className="flex gap-3 mb-6 flex-wrap">
             <button
               onClick={() => setFilter('all')}
               className={`glass-tag px-4 py-2 rounded-full ${filter === 'all' ? 'active' : ''}`}
@@ -196,7 +216,13 @@ export default function Home() {
               onClick={() => setFilter('incorrect')}
               className={`glass-tag px-4 py-2 rounded-full ${filter === 'incorrect' ? 'active' : ''}`}
             >
-              Incorrect ({answers.filter(a => !a.isCorrect).length})
+              Incorrect ({answers.filter(a => !a.isCorrect && !a.skipped).length})
+            </button>
+            <button
+              onClick={() => setFilter('skipped')}
+              className={`glass-tag px-4 py-2 rounded-full ${filter === 'skipped' ? 'active' : ''}`}
+            >
+              Skipped ({answers.filter(a => a.skipped).length})
             </button>
           </div>
 
@@ -204,10 +230,14 @@ export default function Home() {
             {filteredAnswers.map((answer, index) => (
               <div key={index} className="glass p-6 rounded-lg">
                 <p className="font-semibold">{index + 1}. {answer.question}</p>
-                <p className={`mt-2 ${answer.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                  Your answer: {answer.userAnswer}
-                </p>
-                {!answer.isCorrect && (
+                {answer.skipped ? (
+                  <p className="text-gray-600 mt-2">Skipped</p>
+                ) : (
+                  <p className={`mt-2 ${answer.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                    Your answer: {answer.userAnswer}
+                  </p>
+                )}
+                {(!answer.isCorrect || answer.skipped) && (
                   <p className="text-green-600 mt-1">
                     Correct answer: {answer.correctAnswer}
                   </p>
