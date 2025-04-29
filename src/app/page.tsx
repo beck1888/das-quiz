@@ -21,6 +21,8 @@ export default function Home() {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [showSummary, setShowSummary] = useState(false);
   const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect'>('all');
+  const [explanation, setExplanation] = useState<string | null>(null);
+  const [loadingExplanation, setLoadingExplanation] = useState(false);
 
   const generateQuiz = async () => {
     setAnswers([]);
@@ -63,11 +65,33 @@ export default function Home() {
     setShowAnswer(true);
   };
 
+  const getExplanation = async () => {
+    setLoadingExplanation(true);
+    try {
+      const currentQ = quiz!.questions[currentQuestion];
+      const response = await fetch('/api/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: currentQ.question,
+          correctAnswer: currentQ.correctAnswer,
+          userAnswer: selectedAnswer,
+        }),
+      });
+      const data = await response.json();
+      setExplanation(data.explanation);
+    } catch (error) {
+      console.error('Failed to get explanation:', error);
+    }
+    setLoadingExplanation(false);
+  };
+
   const handleNext = () => {
     if (currentQuestion < numQuestions - 1) {
       setCurrentQuestion(curr => curr + 1);
       setSelectedAnswer(null);
       setShowAnswer(false);
+      setExplanation(null);
     } else {
       setShowSummary(true);
     }
@@ -235,6 +259,23 @@ export default function Home() {
         )}
         {showAnswer && (
           <div className="space-y-4 mt-6">
+            {!explanation && (
+              <button
+                onClick={getExplanation}
+                disabled={loadingExplanation}
+                className="w-full bg-purple-500 text-white p-3 rounded-lg hover:bg-purple-600 transition-colors mb-3"
+              >
+                {loadingExplanation ? 'Getting Explanation...' : 'Explain This Answer'}
+              </button>
+            )}
+            
+            {explanation && (
+              <div className="glass p-4 rounded-lg mb-3">
+                <h3 className="font-bold mb-2">Explanation:</h3>
+                <p>{explanation}</p>
+              </div>
+            )}
+
             <button
               onClick={handleNext}
               className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors"
