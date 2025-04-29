@@ -289,40 +289,83 @@ export default function Home() {
           <p>Error loading question</p>
         )}
 
-        {!showAnswer && !hint && (
-          <button
-            onClick={getHint}
-            disabled={loadingHint}
-            className="h-9 px-4 rounded-lg border-2 border-black flex items-center justify-center gap-2 hover:bg-black/5 transition-all group"
-            title="Get a hint"
-          >
-            {loadingHint ? (
-              <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <>
-                <img
-                  src="/icons/outline/lightbulb.svg"
-                  alt="Hint"
-                  className="w-5 h-5 group-hover:hidden"
-                />
-                <img
-                  src="/icons/fill/lightbulb.svg"
-                  alt="Hint"
-                  className="w-5 h-5 hidden group-hover:block"
-                />
-                <span className="text-sm font-medium">Hint</span>
-              </>
-            )}
-          </button>
+        {(
+          <div className="flex justify-between">
+            <button
+              onClick={showAnswer ? getExplanation : getHint}
+              disabled={showAnswer ? (loadingExplanation || !!explanation) : (loadingHint || !!hint)}
+              className="h-9 px-4 rounded-lg border-2 border-black flex items-center justify-center gap-2 hover:bg-black/5 transition-all group"
+              title={showAnswer ? "Get explanation" : "Get a hint"}
+            >
+              {showAnswer ? (
+                loadingExplanation ? (
+                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <img
+                      src="/icons/outline/question-circle.svg"
+                      alt="Explain"
+                      className="w-5 h-5 group-hover:hidden"
+                    />
+                    <img
+                      src="/icons/fill/question-circle.svg"
+                      alt="Explain"
+                      className="w-5 h-5 hidden group-hover:block"
+                    />
+                    <span className="text-sm font-medium">Explain</span>
+                  </>
+                )
+              ) : (
+                loadingHint ? (
+                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <>
+                    <img
+                      src="/icons/outline/lightbulb.svg"
+                      alt="Hint"
+                      className="w-5 h-5 group-hover:hidden"
+                    />
+                    <img
+                      src="/icons/fill/lightbulb.svg"
+                      alt="Hint"
+                      className="w-5 h-5 hidden group-hover:block"
+                    />
+                    <span className="text-sm font-medium">Hint</span>
+                  </>
+                )
+              )}
+            </button>
+            <button
+              onClick={handleNext}
+              className={`h-9 px-4 rounded-lg border-2 flex items-center justify-center gap-2 transition-all group ml-auto ${
+                showAnswer 
+                  ? 'bg-blue-500 hover:bg-blue-600 text-white border-transparent' 
+                  : 'border-black hover:bg-black/5'
+              }`}
+              title={showAnswer ? "Next question" : "Skip question"}
+            >
+              <img
+                src={`/icons/${showAnswer ? 'outline/check-square' : 'outline/x-square'}.svg`}
+                alt={showAnswer ? "Next" : "Skip"}
+                className="w-5 h-5 group-hover:hidden"
+              />
+              <img
+                src={`/icons/${showAnswer ? 'fill/check-square' : 'fill/x-square'}.svg`}
+                alt={showAnswer ? "Next" : "Skip"}
+                className="w-5 h-5 hidden group-hover:block"
+              />
+              <span className="text-sm font-medium">{showAnswer ? 'Next' : 'Skip'}</span>
+            </button>
+          </div>
         )}
 
         {hint && !showAnswer && (
-          <div className="glass p-4 rounded-lg">
+          <div className="glass p-4 rounded-lg mt-4">
             <h3 className="font-bold mb-2">Hint:</h3>
             <p>{hint}</p>
           </div>
         )}
-
+        
         {showAnswer && (
           <div className="space-y-4 mt-6">
             {explanation ? (
@@ -331,22 +374,6 @@ export default function Home() {
                 <p>{explanation}</p>
               </div>
             ) : null}
-            
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={getExplanation}
-                disabled={loadingExplanation || !!explanation}
-                className="bg-purple-500 text-white p-3 rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50"
-              >
-                {loadingExplanation ? 'Getting Explanation...' : 'Explain Answer'}
-              </button>
-              <button
-                onClick={handleNext}
-                className="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                {currentQuestion < numQuestions - 1 ? 'Next Question' : 'Show Summary'}
-              </button>
-            </div>
           </div>
         )}
       </div>
