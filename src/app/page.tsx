@@ -188,14 +188,14 @@ export default function Home() {
                   key={index}
                   onClick={() => handleAnswerSelect(answer)}
                   disabled={showAnswer}
-                  className={`w-full p-3 text-left rounded-lg transition-colors ${
+                  className={`w-full p-3 text-left rounded-lg transition-colors border-2 ${
                     showAnswer
                       ? answer === quiz.questions[currentQuestion].correctAnswer
-                        ? 'bg-green-100 border-green-500'
+                        ? 'bg-green-100 border-green-500 text-green-700'
                         : answer === selectedAnswer
-                        ? 'bg-red-100 border-red-500'
-                        : 'opacity-50'
-                      : 'glass-tag hover:bg-opacity-40'
+                        ? 'bg-red-100 border-red-500 text-red-700'
+                        : 'border-gray-300 opacity-50'
+                      : 'glass-tag border-gray-300 hover:bg-white/40 hover:border-gray-400 active:bg-white/50'
                   }`}
                 >
                   {answer}
@@ -208,15 +208,6 @@ export default function Home() {
         )}
         {showAnswer && (
           <div className="space-y-4 mt-6">
-            <p className={`text-lg font-semibold ${
-              selectedAnswer === quiz.questions[currentQuestion].correctAnswer
-                ? 'text-green-600'
-                : 'text-red-600'
-            }`}>
-              {selectedAnswer === quiz.questions[currentQuestion].correctAnswer
-                ? 'Correct!'
-                : 'Incorrect! The correct answer was: ' + quiz.questions[currentQuestion].correctAnswer}
-            </p>
             <button
               onClick={handleNext}
               className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors"

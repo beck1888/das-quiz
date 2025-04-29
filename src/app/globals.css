@@ -45,15 +45,17 @@ body {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(200, 200, 200, 0.5);
   transition: all 0.3s ease;
 }
 
 .glass-tag:hover {
   background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(150, 150, 150, 0.8);
 }
 
 .glass-tag.active {
   background: rgba(59, 130, 246, 0.5);
   color: white;
+  border-color: rgba(59, 130, 246, 0.8);
 }
