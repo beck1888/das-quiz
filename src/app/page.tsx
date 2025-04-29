@@ -311,13 +311,13 @@ export default function Home() {
                   {answer.skipped ? (
                     <p className="text-gray-600 mt-2">Skipped</p>
                   ) : (
-                    <p className={`mt-2 ${answer.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                      Your answer: {answer.userAnswer}
+                    <p className="mt-2">
+                      <strong>You said:</strong> {answer.userAnswer}
                     </p>
                   )}
                   {(!answer.isCorrect || answer.skipped) && (
-                    <p className="text-green-600 mt-1">
-                      Correct answer: {answer.correctAnswer}
+                    <p className="mt-1">
+                      <strong>Answer:</strong> {answer.correctAnswer}
                     </p>
                   )}
                 </div>
