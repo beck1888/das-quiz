@@ -79,8 +79,8 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="text-center space-y-4 glass p-8 rounded-xl">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
           <p className="text-xl">Generating your quiz...</p>
         </div>
@@ -154,18 +154,18 @@ export default function Home() {
 
   if (!quiz) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="space-y-4 w-full max-w-md">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="space-y-4 w-full max-w-md glass p-8 rounded-xl">
           <input
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="Enter a topic..."
-            className="w-full p-2 border rounded"
+            className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={generateQuiz}
-            className="w-full bg-blue-500 text-white p-2 rounded disabled:opacity-50"
+            className="w-full bg-blue-500 text-white p-3 rounded-lg disabled:opacity-50 hover:bg-blue-600 transition-colors"
             disabled={loading || !topic}
           >
             {loading ? 'Generating...' : 'Generate Quiz'}
@@ -176,54 +176,56 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <h2 className="text-2xl font-bold">Question {currentQuestion + 1}/3</h2>
-      {quiz.questions && quiz.questions[currentQuestion] ? (
-        <>
-          <p className="text-xl">{quiz.questions[currentQuestion].question}</p>
-          <div className="space-y-2">
-            {shuffleAnswers(quiz.questions[currentQuestion]).map((answer, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswerSelect(answer)}
-                disabled={showAnswer}
-                className={`w-full p-2 text-left border rounded ${
-                  showAnswer
-                    ? answer === quiz.questions[currentQuestion].correctAnswer
-                      ? 'bg-green-100 border-green-500'
-                      : answer === selectedAnswer
-                      ? 'bg-red-100 border-red-500'
-                      : 'opacity-50'
-                    : 'hover:bg-gray-100'
-                }`}
-              >
-                {answer}
-              </button>
-            ))}
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
+      <div className="w-full max-w-2xl glass p-8 rounded-xl space-y-6">
+        <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/3</h2>
+        {quiz.questions && quiz.questions[currentQuestion] ? (
+          <>
+            <p className="text-xl mb-6">{quiz.questions[currentQuestion].question}</p>
+            <div className="space-y-3">
+              {shuffleAnswers(quiz.questions[currentQuestion]).map((answer, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleAnswerSelect(answer)}
+                  disabled={showAnswer}
+                  className={`w-full p-3 text-left rounded-lg transition-colors ${
+                    showAnswer
+                      ? answer === quiz.questions[currentQuestion].correctAnswer
+                        ? 'bg-green-100 border-green-500'
+                        : answer === selectedAnswer
+                        ? 'bg-red-100 border-red-500'
+                        : 'opacity-50'
+                      : 'glass-tag hover:bg-opacity-40'
+                  }`}
+                >
+                  {answer}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p>Error loading question</p>
+        )}
+        {showAnswer && (
+          <div className="space-y-4 mt-6">
+            <p className={`text-lg font-semibold ${
+              selectedAnswer === quiz.questions[currentQuestion].correctAnswer
+                ? 'text-green-600'
+                : 'text-red-600'
+            }`}>
+              {selectedAnswer === quiz.questions[currentQuestion].correctAnswer
+                ? 'Correct!'
+                : 'Incorrect! The correct answer was: ' + quiz.questions[currentQuestion].correctAnswer}
+            </p>
+            <button
+              onClick={handleNext}
+              className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              {currentQuestion < 2 ? 'Next Question' : 'Show Summary'}
+            </button>
           </div>
-        </>
-      ) : (
-        <p>Error loading question</p>
-      )}
-      {showAnswer && (
-        <div className="space-y-4">
-          <p className={`text-lg font-semibold ${
-            selectedAnswer === quiz.questions[currentQuestion].correctAnswer
-              ? 'text-green-600'
-              : 'text-red-600'
-          }`}>
-            {selectedAnswer === quiz.questions[currentQuestion].correctAnswer
-              ? 'Correct!'
-              : 'Incorrect! The correct answer was: ' + quiz.questions[currentQuestion].correctAnswer}
-          </p>
-          <button
-            onClick={handleNext}
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          >
-            {currentQuestion < 2 ? 'Next Question' : 'Show Summary'}
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
