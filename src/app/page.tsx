@@ -24,6 +24,8 @@ export default function Home() {
   const [explanation, setExplanation] = useState<string | null>(null);
   const [loadingExplanation, setLoadingExplanation] = useState(false);
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
+  const [hint, setHint] = useState<string | null>(null);
+  const [loadingHint, setLoadingHint] = useState(false);
 
   const generateQuiz = async () => {
     setAnswers([]);
@@ -91,6 +93,26 @@ export default function Home() {
     setLoadingExplanation(false);
   };
 
+  const getHint = async () => {
+    setLoadingHint(true);
+    try {
+      const currentQ = quiz!.questions[currentQuestion];
+      const response = await fetch('/api/hint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question: currentQ.question,
+          correctAnswer: currentQ.correctAnswer,
+        }),
+      });
+      const data = await response.json();
+      setHint(data.hint);
+    } catch (error) {
+      console.error('Failed to get hint:', error);
+    }
+    setLoadingHint(false);
+  };
+
   const handleNext = () => {
     if (currentQuestion < numQuestions - 1) {
       const nextQuestion = currentQuestion + 1;
@@ -100,6 +122,7 @@ export default function Home() {
       setSelectedAnswer(null);
       setShowAnswer(false);
       setExplanation(null);
+      setHint(null);
     } else {
       setShowSummary(true);
     }
@@ -241,13 +264,13 @@ export default function Home() {
         {quiz.questions && quiz.questions[currentQuestion] ? (
           <>
             <p className="text-xl mb-6">{quiz.questions[currentQuestion].question}</p>
-            <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
               {shuffledAnswers.map((answer, index) => (
                 <button
                   key={index}
                   onClick={() => handleAnswerSelect(answer)}
                   disabled={showAnswer}
-                  className={`w-full p-3 text-left rounded-lg transition-colors border-2 ${
+                  className={`p-4 text-left rounded-lg transition-colors border-2 h-full ${
                     showAnswer
                       ? answer === quiz.questions[currentQuestion].correctAnswer
                         ? 'bg-green-100 border-green-500 text-green-700'
@@ -265,31 +288,48 @@ export default function Home() {
         ) : (
           <p>Error loading question</p>
         )}
+
+        {!showAnswer && !hint && (
+          <button
+            onClick={getHint}
+            disabled={loadingHint}
+            className="w-full bg-purple-500/50 text-white p-3 rounded-lg hover:bg-purple-600/50 transition-colors"
+          >
+            {loadingHint ? 'Getting Hint...' : 'Get Hint'}
+          </button>
+        )}
+
+        {hint && !showAnswer && (
+          <div className="glass p-4 rounded-lg">
+            <h3 className="font-bold mb-2">Hint:</h3>
+            <p>{hint}</p>
+          </div>
+        )}
+
         {showAnswer && (
           <div className="space-y-4 mt-6">
-            {!explanation && (
-              <button
-                onClick={getExplanation}
-                disabled={loadingExplanation}
-                className="w-full bg-purple-500 text-white p-3 rounded-lg hover:bg-purple-600 transition-colors mb-3"
-              >
-                {loadingExplanation ? 'Getting Explanation...' : 'Explain This Answer'}
-              </button>
-            )}
-            
-            {explanation && (
+            {explanation ? (
               <div className="glass p-4 rounded-lg mb-3">
                 <h3 className="font-bold mb-2">Explanation:</h3>
                 <p>{explanation}</p>
               </div>
-            )}
-
-            <button
-              onClick={handleNext}
-              className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              {currentQuestion < numQuestions - 1 ? 'Next Question' : 'Show Summary'}
-            </button>
+            ) : null}
+            
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={getExplanation}
+                disabled={loadingExplanation || !!explanation}
+                className="bg-purple-500 text-white p-3 rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50"
+              >
+                {loadingExplanation ? 'Getting Explanation...' : 'Explain Answer'}
+              </button>
+              <button
+                onClick={handleNext}
+                className="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                {currentQuestion < numQuestions - 1 ? 'Next Question' : 'Show Summary'}
+              </button>
+            </div>
           </div>
         )}
       </div>
