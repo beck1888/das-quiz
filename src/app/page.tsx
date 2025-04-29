@@ -203,7 +203,7 @@ export default function Home() {
       const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
       const scorePercentage = totalAnswered > 0 ? (score/totalAnswered) * 100 : 0;
       
-      if (scorePercentage >= 75) {
+      if (scorePercentage > 0) {
         const defaults = {
           spread: 360,
           ticks: 200,
