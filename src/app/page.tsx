@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Quiz, Question } from '@/types/quiz';
 import Select from '@/components/Select';
+import Lottie from 'lottie-react';
+import loaderAnimation from '../../public/animations/loader.json';
 
 interface Answer {
   question: string;
@@ -169,7 +171,9 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="text-center space-y-4 glass p-8 rounded-xl">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="w-64 h-64 mx-auto">
+            <Lottie animationData={loaderAnimation} loop={true} />
+          </div>
           <p className="text-xl">Generating your quiz...</p>
         </div>
       </div>
