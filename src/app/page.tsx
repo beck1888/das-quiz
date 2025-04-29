@@ -11,6 +11,7 @@ interface Answer {
   correctAnswer: string;
   isCorrect: boolean;
   skipped: boolean;
+  attempt: number;  // Add attempt number
 }
 
 export default function Home() {
@@ -31,6 +32,9 @@ export default function Home() {
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
   const [hint, setHint] = useState<string | null>(null);
   const [loadingHint, setLoadingHint] = useState(false);
+  const [attempt, setAttempt] = useState(1);
+  const [previousScores, setPreviousScores] = useState<number[]>([]);
+  const [savedQuiz, setSavedQuiz] = useState<Quiz | null>(null);
 
   useEffect(() => {
     // Load configuration when component mounts
@@ -55,6 +59,7 @@ export default function Home() {
       });
       const data = await response.json();
       setQuiz(data.quiz);
+      setSavedQuiz(data.quiz); // Save the quiz for retries
       setCurrentQuestion(0);
       // Shuffle answers for the first question
       if (data.quiz?.questions[0]) {
@@ -83,7 +88,8 @@ export default function Home() {
       userAnswer: answer,
       correctAnswer: currentQ.correctAnswer,
       isCorrect: answer === currentQ.correctAnswer,
-      skipped: false
+      skipped: false,
+      attempt: attempt  // Add attempt number
     }]);
     setSelectedAnswer(answer);
     setShowAnswer(true);
@@ -139,7 +145,8 @@ export default function Home() {
         userAnswer: null,
         correctAnswer: currentQ.correctAnswer,
         isCorrect: false,
-        skipped: true
+        skipped: true,
+        attempt: attempt  // Add attempt number
       }]);
     }
     if (currentQuestion < numQuestions - 1) {
@@ -156,6 +163,24 @@ export default function Home() {
     }
   };
 
+  const retryQuiz = () => {
+    const currentScore = answers.filter(a => a.isCorrect).length;
+    setPreviousScores(prev => [...prev, currentScore]);
+    setQuiz(savedQuiz);
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setShowAnswer(false);
+    setShowSummary(false);
+    setAnswers([]);
+    setExplanation(null);
+    setHint(null);
+    setAttempt(prev => prev + 1);
+    // Shuffle answers for the first question
+    if (savedQuiz?.questions[0]) {
+      setShuffledAnswers(shuffleAnswers(savedQuiz.questions[0]));
+    }
+  };
+
   const startNewQuiz = () => {
     setQuiz(null);
     setTopic('');
@@ -165,6 +190,9 @@ export default function Home() {
     setAnswers([]);
     setCurrentQuestion(0);
     setFilter('all');
+    setAttempt(1);
+    setPreviousScores([]);
+    setSavedQuiz(null);
   };
 
   if (loading) {
@@ -181,9 +209,12 @@ export default function Home() {
   }
 
   if (showSummary) {
-    const score = answers.filter(a => a.isCorrect).length;
-    const totalAnswered = answers.filter(a => !a.skipped).length;
+    const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
+    const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
+    const previousScore = previousScores.length > 0 ? previousScores[previousScores.length - 1] : null;
     const filteredAnswers = answers.filter(answer => {
+      const matchesAttempt = answer.attempt === attempt;
+      if (!matchesAttempt) return false;
       if (filter === 'correct') return answer.isCorrect;
       if (filter === 'incorrect') return !answer.isCorrect && !answer.skipped;
       if (filter === 'skipped') return answer.skipped;
@@ -195,10 +226,14 @@ export default function Home() {
         <div className="w-full max-w-2xl space-y-6 glass p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           <div className="text-xl text-center mb-6">
-            Your Score: {score}/{totalAnswered} ({totalAnswered > 0 ? Math.round((score/totalAnswered) * 100) : 0}%)
-            {answers.some(a => a.skipped) && (
+            <div>Attempt #{attempt}</div>
+            <div>Current Score: {score}/{totalAnswered} ({totalAnswered > 0 ? Math.round((score/totalAnswered) * 100) : 0}%)</div>
+            {previousScore !== null && (
               <div className="text-sm text-gray-600 mt-1">
-                {answers.filter(a => a.skipped).length} questions skipped
+                Previous Score: {previousScore}/{totalAnswered} ({Math.round((previousScore/totalAnswered) * 100)}%)
+                <span className={previousScore < score ? " text-green-600" : previousScore > score ? " text-red-600" : ""}>
+                  {previousScore < score ? " ↑" : previousScore > score ? " ↓" : " ="}
+                </span>
               </div>
             )}
           </div>
@@ -259,12 +294,31 @@ export default function Home() {
             )}
           </div>
           
-          <button
-            onClick={startNewQuiz}
-            className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 mt-6 transition-colors"
-          >
-            Start New Quiz
-          </button>
+          <div className="flex gap-3 w-full mt-6">
+            <button
+              onClick={retryQuiz}
+              className="flex-1 bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+            >
+              <img
+                src="/icons/static/redo.svg"
+                alt="Retry"
+                className="w-5 h-5"
+              />
+              Try Again
+            </button>
+            <button
+              onClick={startNewQuiz}
+              className="flex-1 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+            >
+              <img
+                src="/icons/static/plus.svg"
+                alt="New Quiz"
+                className="w-5 h-5"
+              />
+              Start New Quiz
+            </button>
+          </div>
+          
         </div>
       </div>
     );
