@@ -24,8 +24,23 @@ export async function POST(req: NextRequest) {
     });
 
     const quiz = JSON.parse(completion.choices[0].message.content!) as Quiz;
-    return NextResponse.json(quiz);
+    return NextResponse.json({
+      quiz,
+      stats: {
+        totalQuestions: quiz.questions.length,
+        grade: 0, // Initial grade, will be updated on the frontend
+        missedQuestions: [], // Will be populated on the frontend
+        correctQuestions: [] // Will be populated on the frontend
+      }
+    });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to generate quiz' }, { status: 500 });
+    console.error('Quiz generation error:', error);
+    return NextResponse.json(
+      { 
+        error: 'Failed to generate quiz',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      }, 
+      { status: 500 }
+    );
   }
 }

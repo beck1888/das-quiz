@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Quiz, QuizQuestion } from '@/types/quiz';
+import { Quiz, Question } from '@/types/quiz';
 
 interface Answer {
   question: string;
@@ -30,7 +30,7 @@ export default function Home() {
         body: JSON.stringify({ topic }),
       });
       const data = await response.json();
-      setQuiz(data);
+      setQuiz(data.quiz); // Update this line to access the quiz property
       setCurrentQuestion(0);
     } catch (error) {
       console.error('Failed to generate quiz:', error);
@@ -38,7 +38,7 @@ export default function Home() {
     setLoading(false);
   };
 
-  const shuffleAnswers = (question: QuizQuestion) => {
+  const shuffleAnswers = (question: Question) => {
     const answers = [...question.incorrectAnswers, question.correctAnswer];
     return answers.sort(() => Math.random() - 0.5);
   };
@@ -143,27 +143,33 @@ export default function Home() {
       ) : (
         <div className="w-full max-w-2xl space-y-4">
           <h2 className="text-2xl font-bold">Question {currentQuestion + 1}/3</h2>
-          <p className="text-xl">{quiz.questions[currentQuestion].question}</p>
-          <div className="space-y-2">
-            {shuffleAnswers(quiz.questions[currentQuestion]).map((answer, index) => (
-              <button
-                key={index}
-                disabled={showAnswer}
-                onClick={() => handleAnswerSelect(answer)}
-                className={`w-full p-2 text-left border rounded ${
-                  showAnswer
-                    ? answer === quiz.questions[currentQuestion].correctAnswer
-                      ? 'bg-green-100 border-green-500'
-                      : answer === selectedAnswer
-                      ? 'bg-red-100 border-red-500'
-                      : 'opacity-50'
-                    : 'hover:bg-gray-100'
-                }`}
-              >
-                {answer}
-              </button>
-            ))}
-          </div>
+          {quiz.questions && quiz.questions[currentQuestion] ? (
+            <>
+              <p className="text-xl">{quiz.questions[currentQuestion].question}</p>
+              <div className="space-y-2">
+                {shuffleAnswers(quiz.questions[currentQuestion]).map((answer, index) => (
+                  <button
+                    key={index}
+                    disabled={showAnswer}
+                    onClick={() => handleAnswerSelect(answer)}
+                    className={`w-full p-2 text-left border rounded ${
+                      showAnswer
+                        ? answer === quiz.questions[currentQuestion].correctAnswer
+                          ? 'bg-green-100 border-green-500'
+                          : answer === selectedAnswer
+                          ? 'bg-red-100 border-red-500'
+                          : 'opacity-50'
+                        : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    {answer}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p>Error loading question</p>
+          )}
           {showAnswer && (
             <div className="space-y-4">
               <p className={`text-lg font-semibold ${
