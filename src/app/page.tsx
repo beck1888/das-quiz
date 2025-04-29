@@ -293,9 +293,26 @@ export default function Home() {
           <button
             onClick={getHint}
             disabled={loadingHint}
-            className="w-full bg-purple-500/50 text-white p-3 rounded-lg hover:bg-purple-600/50 transition-colors"
+            className="h-9 px-4 rounded-lg border-2 border-black flex items-center justify-center gap-2 hover:bg-black/5 transition-all group"
+            title="Get a hint"
           >
-            {loadingHint ? 'Getting Hint...' : 'Get Hint'}
+            {loadingHint ? (
+              <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <>
+                <img
+                  src="/icons/outline/lightbulb.svg"
+                  alt="Hint"
+                  className="w-5 h-5 group-hover:hidden"
+                />
+                <img
+                  src="/icons/fill/lightbulb.svg"
+                  alt="Hint"
+                  className="w-5 h-5 hidden group-hover:block"
+                />
+                <span className="text-sm font-medium">Hint</span>
+              </>
+            )}
           </button>
         )}
 
