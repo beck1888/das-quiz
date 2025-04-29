@@ -11,6 +11,8 @@ interface Answer {
 
 export default function Home() {
   const [topic, setTopic] = useState('');
+  const [numQuestions, setNumQuestions] = useState(3);
+  const [difficulty, setDifficulty] = useState('medium');
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ export default function Home() {
       const response = await fetch('/api/quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic }),
+        body: JSON.stringify({ topic, numQuestions, difficulty }),
       });
       const data = await response.json();
       setQuiz(data.quiz);
@@ -37,6 +39,11 @@ export default function Home() {
       console.error('Failed to generate quiz:', error);
     }
     setLoading(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    generateQuiz();
   };
 
   const shuffleAnswers = (question: Question) => {
@@ -57,7 +64,7 @@ export default function Home() {
   };
 
   const handleNext = () => {
-    if (currentQuestion < 2) {
+    if (currentQuestion < numQuestions - 1) {
       setCurrentQuestion(curr => curr + 1);
       setSelectedAnswer(null);
       setShowAnswer(false);
@@ -101,7 +108,7 @@ export default function Home() {
         <div className="w-full max-w-2xl space-y-6 glass p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           <div className="text-xl text-center mb-6">
-            Your Score: {score}/3 ({Math.round((score/3) * 100)}%)
+            Your Score: {score}/{numQuestions} ({Math.round((score/numQuestions) * 100)}%)
           </div>
           
           <div className="flex gap-3 mb-6">
@@ -155,7 +162,7 @@ export default function Home() {
   if (!quiz) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
-        <div className="space-y-4 w-full max-w-md glass p-8 rounded-xl">
+        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md glass p-8 rounded-xl">
           <input
             type="text"
             value={topic}
@@ -163,14 +170,34 @@ export default function Home() {
             placeholder="Enter a topic..."
             className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <div className="grid grid-cols-2 gap-4">
+            <select
+              value={numQuestions}
+              onChange={(e) => setNumQuestions(Number(e.target.value))}
+              className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {[1, 2, 3, 4, 5].map(num => (
+                <option key={num} value={num}>{num} Questions</option>
+              ))}
+            </select>
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {['easy', 'medium', 'hard', 'expert'].map(level => (
+                <option key={level} value={level}>{level.charAt(0).toUpperCase() + level.slice(1)}</option>
+              ))}
+            </select>
+          </div>
           <button
-            onClick={generateQuiz}
+            type="submit"
             className="w-full bg-blue-500 text-white p-3 rounded-lg disabled:opacity-50 hover:bg-blue-600 transition-colors"
             disabled={loading || !topic}
           >
             {loading ? 'Generating...' : 'Generate Quiz'}
           </button>
-        </div>
+        </form>
       </div>
     );
   }
@@ -178,7 +205,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="w-full max-w-2xl glass p-8 rounded-xl space-y-6">
-        <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/3</h2>
+        <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/{numQuestions}</h2>
         {quiz.questions && quiz.questions[currentQuestion] ? (
           <>
             <p className="text-xl mb-6">{quiz.questions[currentQuestion].question}</p>
@@ -212,7 +239,7 @@ export default function Home() {
               onClick={handleNext}
               className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors"
             >
-              {currentQuestion < 2 ? 'Next Question' : 'Show Summary'}
+              {currentQuestion < numQuestions - 1 ? 'Next Question' : 'Show Summary'}
             </button>
           </div>
         )}

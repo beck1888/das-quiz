@@ -7,18 +7,18 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: NextRequest) {
-  const { topic } = await req.json();
+  const { topic, numQuestions, difficulty } = await req.json();
 
-  const prompt = `Create a quiz with 3 multiple choice questions about "${topic}". 
+  const prompt = `Create a quiz with ${numQuestions} multiple choice questions about "${topic}" at ${difficulty} difficulty level. 
     Return a JSON object with an array of questions. Each question should have:
-    - A question text
+    - A question text (make it ${difficulty} difficulty)
     - One correct answer
     - Three plausible but incorrect answers
     Format: { "questions": [{ "question": "", "correctAnswer": "", "incorrectAnswers": ["","",""] }] }`;
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4.1-nano", // This is a valid model, do not change it
+      model: "gpt-4.1-nano",
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
     });
