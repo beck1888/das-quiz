@@ -31,3 +31,29 @@ body {
   color: var(--foreground);          /* Use theme text color */
   font-family: var(--font-sans);     /* Use Geist sans-serif font */
 }
+
+/* Glassmorphic styles */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.glass-tag {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: all 0.3s ease;
+}
+
+.glass-tag:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.glass-tag.active {
+  background: rgba(59, 130, 246, 0.5);
+  color: white;
+}

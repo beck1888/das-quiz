@@ -18,6 +18,7 @@ export default function Home() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [showSummary, setShowSummary] = useState(false);
+  const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect'>('all');
 
   const generateQuiz = async () => {
     setAnswers([]);
@@ -30,7 +31,7 @@ export default function Home() {
         body: JSON.stringify({ topic }),
       });
       const data = await response.json();
-      setQuiz(data.quiz); // Update this line to access the quiz property
+      setQuiz(data.quiz);
       setCurrentQuestion(0);
     } catch (error) {
       console.error('Failed to generate quiz:', error);
@@ -73,6 +74,7 @@ export default function Home() {
     setShowSummary(false);
     setAnswers([]);
     setCurrentQuestion(0);
+    setFilter('all');
   };
 
   if (loading) {
@@ -88,16 +90,44 @@ export default function Home() {
 
   if (showSummary) {
     const score = answers.filter(a => a.isCorrect).length;
+    const filteredAnswers = answers.filter(answer => {
+      if (filter === 'correct') return answer.isCorrect;
+      if (filter === 'incorrect') return !answer.isCorrect;
+      return true;
+    });
+
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-2xl space-y-6">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="w-full max-w-2xl space-y-6 glass p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           <div className="text-xl text-center mb-6">
             Your Score: {score}/3 ({Math.round((score/3) * 100)}%)
           </div>
+          
+          <div className="flex gap-3 mb-6">
+            <button
+              onClick={() => setFilter('all')}
+              className={`glass-tag px-4 py-2 rounded-full ${filter === 'all' ? 'active' : ''}`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setFilter('correct')}
+              className={`glass-tag px-4 py-2 rounded-full ${filter === 'correct' ? 'active' : ''}`}
+            >
+              Correct ({answers.filter(a => a.isCorrect).length})
+            </button>
+            <button
+              onClick={() => setFilter('incorrect')}
+              className={`glass-tag px-4 py-2 rounded-full ${filter === 'incorrect' ? 'active' : ''}`}
+            >
+              Incorrect ({answers.filter(a => !a.isCorrect).length})
+            </button>
+          </div>
+
           <div className="space-y-4">
-            {answers.map((answer, index) => (
-              <div key={index} className="border rounded p-4">
+            {filteredAnswers.map((answer, index) => (
+              <div key={index} className="glass p-6 rounded-lg">
                 <p className="font-semibold">{index + 1}. {answer.question}</p>
                 <p className={`mt-2 ${answer.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
                   Your answer: {answer.userAnswer}
@@ -110,9 +140,10 @@ export default function Home() {
               </div>
             ))}
           </div>
+          
           <button
             onClick={startNewQuiz}
-            className="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 mt-6"
+            className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 mt-6 transition-colors"
           >
             Start New Quiz
           </button>
@@ -121,9 +152,9 @@ export default function Home() {
     );
   }
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      {!quiz ? (
+  if (!quiz) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="space-y-4 w-full max-w-md">
           <input
             type="text"
@@ -134,61 +165,63 @@ export default function Home() {
           />
           <button
             onClick={generateQuiz}
-            disabled={loading || !topic}
             className="w-full bg-blue-500 text-white p-2 rounded disabled:opacity-50"
+            disabled={loading || !topic}
           >
             {loading ? 'Generating...' : 'Generate Quiz'}
           </button>
         </div>
-      ) : (
-        <div className="w-full max-w-2xl space-y-4">
-          <h2 className="text-2xl font-bold">Question {currentQuestion + 1}/3</h2>
-          {quiz.questions && quiz.questions[currentQuestion] ? (
-            <>
-              <p className="text-xl">{quiz.questions[currentQuestion].question}</p>
-              <div className="space-y-2">
-                {shuffleAnswers(quiz.questions[currentQuestion]).map((answer, index) => (
-                  <button
-                    key={index}
-                    disabled={showAnswer}
-                    onClick={() => handleAnswerSelect(answer)}
-                    className={`w-full p-2 text-left border rounded ${
-                      showAnswer
-                        ? answer === quiz.questions[currentQuestion].correctAnswer
-                          ? 'bg-green-100 border-green-500'
-                          : answer === selectedAnswer
-                          ? 'bg-red-100 border-red-500'
-                          : 'opacity-50'
-                        : 'hover:bg-gray-100'
-                    }`}
-                  >
-                    {answer}
-                  </button>
-                ))}
-              </div>
-            </>
-          ) : (
-            <p>Error loading question</p>
-          )}
-          {showAnswer && (
-            <div className="space-y-4">
-              <p className={`text-lg font-semibold ${
-                selectedAnswer === quiz.questions[currentQuestion].correctAnswer
-                  ? 'text-green-600'
-                  : 'text-red-600'
-              }`}>
-                {selectedAnswer === quiz.questions[currentQuestion].correctAnswer
-                  ? 'Correct!'
-                  : 'Incorrect! The correct answer was: ' + quiz.questions[currentQuestion].correctAnswer}
-              </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <h2 className="text-2xl font-bold">Question {currentQuestion + 1}/3</h2>
+      {quiz.questions && quiz.questions[currentQuestion] ? (
+        <>
+          <p className="text-xl">{quiz.questions[currentQuestion].question}</p>
+          <div className="space-y-2">
+            {shuffleAnswers(quiz.questions[currentQuestion]).map((answer, index) => (
               <button
-                onClick={handleNext}
-                className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                key={index}
+                onClick={() => handleAnswerSelect(answer)}
+                disabled={showAnswer}
+                className={`w-full p-2 text-left border rounded ${
+                  showAnswer
+                    ? answer === quiz.questions[currentQuestion].correctAnswer
+                      ? 'bg-green-100 border-green-500'
+                      : answer === selectedAnswer
+                      ? 'bg-red-100 border-red-500'
+                      : 'opacity-50'
+                    : 'hover:bg-gray-100'
+                }`}
               >
-                {currentQuestion < 2 ? 'Next Question' : 'Show Summary'}
+                {answer}
               </button>
-            </div>
-          )}
+            ))}
+          </div>
+        </>
+      ) : (
+        <p>Error loading question</p>
+      )}
+      {showAnswer && (
+        <div className="space-y-4">
+          <p className={`text-lg font-semibold ${
+            selectedAnswer === quiz.questions[currentQuestion].correctAnswer
+              ? 'text-green-600'
+              : 'text-red-600'
+          }`}>
+            {selectedAnswer === quiz.questions[currentQuestion].correctAnswer
+              ? 'Correct!'
+              : 'Incorrect! The correct answer was: ' + quiz.questions[currentQuestion].correctAnswer}
+          </p>
+          <button
+            onClick={handleNext}
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+          >
+            {currentQuestion < 2 ? 'Next Question' : 'Show Summary'}
+          </button>
         </div>
       )}
     </div>
