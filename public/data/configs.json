@@ -1,0 +1,39 @@
+{
+  "models": {
+    "quiz": "gpt-4.1",
+    "explanation": "gpt-4.1-nano",
+    "hint": "gpt-4.1-nano"
+  },
+  "prompts": {
+    "quiz": "Create a quiz with {numQuestions} multiple choice questions about \"{topic}\" at {difficulty} difficulty level. Return a JSON object with an array of questions. Each question should have:\n- A question text (make it {difficulty} difficulty)\n- One correct answer\n- Three plausible but incorrect answers\nFormat: { \"questions\": [{ \"question\": \"\", \"correctAnswer\": \"\", \"incorrectAnswers\": [\"\",\"\",\"\"] }] }",
+    "explanation": "Question: {question}\nCorrect Answer: {correctAnswer}\nUser's Answer: {userAnswer}\n\nPlease explain in simple, easy to understand language:\n1. Why the correct answer is right\n2. If the user's answer was different, explain why it wasn't correct\nKeep the explanation brief and use everyday language.",
+    "hint": "For this question: \"{question}\"\nWith the correct answer: \"{correctAnswer}\"\n\nGive a very subtle hint that helps point in the right direction without giving away the answer.\nThe hint should be vague but helpful.\nKeep it to one short sentence."
+  },
+  "settings": {
+    "questions": {
+      "min": 1,
+      "max": 3,
+      "default": 2
+    },
+    "difficulties": [
+      {
+        "id": "easy",
+        "label": "Easy",
+        "description": "Good for those with some familiarity"
+      },
+      {
+        "id": "standard",
+        "label": "Standard",
+        "description": "Suitable for intermediate knowledge"
+      },
+      {
+        "id": "expert",
+        "label": "Expert",
+        "description": "University level and beyond"
+      }
+    ],
+    "defaults": {
+      "difficulty": "standard"
+    }
+  }
+}

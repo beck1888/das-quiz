@@ -1,28 +1,31 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import fs from 'fs';
+import path from 'path';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const getConfigs = () => {
+  const configPath = path.join(process.cwd(), 'public/data/configs.json');
+  const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  return configData;
+};
+
 export async function POST(req: Request) {
   try {
     const { question, correctAnswer, userAnswer } = await req.json();
+    const configs = getConfigs();
 
-    const prompt = `
-      Question: ${question}
-      Correct Answer: ${correctAnswer}
-      User's Answer: ${userAnswer}
-      
-      Please explain in simple, easy to understand language:
-      1. Why the correct answer is right
-      2. If the user's answer was different, explain why it wasn't correct
-      Keep the explanation brief and use everyday language.
-    `;
+    const prompt = configs.prompts.explanation
+      .replace('{question}', question)
+      .replace('{correctAnswer}', correctAnswer)
+      .replace('{userAnswer}', userAnswer);
 
     const completion = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "gpt-3.5-turbo",
+      model: configs.models.explanation,
     });
 
     const explanation = completion.choices[0]?.message?.content || "Sorry, couldn't generate an explanation.";

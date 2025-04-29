@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Quiz, Question } from '@/types/quiz';
 
 interface Answer {
@@ -10,6 +10,7 @@ interface Answer {
 }
 
 export default function Home() {
+  const [config, setConfig] = useState<any>(null);
   const [topic, setTopic] = useState('');
   const [numQuestions, setNumQuestions] = useState(3);
   const [difficulty, setDifficulty] = useState('medium');
@@ -26,6 +27,17 @@ export default function Home() {
   const [shuffledAnswers, setShuffledAnswers] = useState<string[]>([]);
   const [hint, setHint] = useState<string | null>(null);
   const [loadingHint, setLoadingHint] = useState(false);
+
+  useEffect(() => {
+    // Load configuration when component mounts
+    fetch('/data/configs.json')
+      .then(res => res.json())
+      .then(data => {
+        setConfig(data);
+        setNumQuestions(data.settings.questions.default);
+        setDifficulty(data.settings.defaults.difficulty);
+      });
+  }, []);
 
   const generateQuiz = async () => {
     setAnswers([]);
@@ -231,24 +243,27 @@ export default function Home() {
               onChange={(e) => setNumQuestions(Number(e.target.value))}
               className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {[1, 2, 3, 4, 5].map(num => (
-                <option key={num} value={num}>{num} Questions</option>
-              ))}
+              {config && [...Array(config.settings.questions.max - config.settings.questions.min + 1)].map((_, i) => {
+                const num = i + config.settings.questions.min;
+                return (
+                  <option key={num} value={num}>{num} Questions</option>
+                );
+              })}
             </select>
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
               className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {['easy', 'medium', 'hard', 'expert'].map(level => (
-                <option key={level} value={level}>{level.charAt(0).toUpperCase() + level.slice(1)}</option>
+              {config?.settings.difficulties.map((level: { id: string, label: string }) => (
+                <option key={level.id} value={level.id}>{level.label}</option>
               ))}
             </select>
           </div>
           <button
             type="submit"
             className="w-full bg-blue-500 text-white p-3 rounded-lg disabled:opacity-50 hover:bg-blue-600 transition-colors"
-            disabled={loading || !topic}
+            disabled={loading || !topic || !config}
           >
             {loading ? 'Generating...' : 'Generate Quiz'}
           </button>

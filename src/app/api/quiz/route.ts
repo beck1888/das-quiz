@@ -1,24 +1,32 @@
 import OpenAI from 'openai';
 import { NextRequest, NextResponse } from 'next/server';
 import { Quiz } from '@/types/quiz';
+import fs from 'fs';
+import path from 'path';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const getConfigs = () => {
+  const configPath = path.join(process.cwd(), 'public/data/configs.json');
+  const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  return configData;
+};
+
 export async function POST(req: NextRequest) {
   const { topic, numQuestions, difficulty } = await req.json();
+  const configs = getConfigs();
 
-  const prompt = `Create a quiz with ${numQuestions} multiple choice questions about "${topic}" at ${difficulty} difficulty level. 
-    Return a JSON object with an array of questions. Each question should have:
-    - A question text (make it ${difficulty} difficulty)
-    - One correct answer
-    - Three plausible but incorrect answers
-    Format: { "questions": [{ "question": "", "correctAnswer": "", "incorrectAnswers": ["","",""] }] }`;
+  const promptTemplate = configs.prompts.quiz;
+  const prompt = promptTemplate
+    .replace('{numQuestions}', numQuestions)
+    .replace('{topic}', topic)
+    .replace(/{difficulty}/g, difficulty);
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4.1-nano",
+      model: configs.models.quiz,
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" },
     });

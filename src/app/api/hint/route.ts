@@ -1,26 +1,30 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import fs from 'fs';
+import path from 'path';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+const getConfigs = () => {
+  const configPath = path.join(process.cwd(), 'public/data/configs.json');
+  const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  return configData;
+};
+
 export async function POST(req: Request) {
   try {
     const { question, correctAnswer } = await req.json();
+    const configs = getConfigs();
 
-    const prompt = `
-      For this question: "${question}"
-      With the correct answer: "${correctAnswer}"
-      
-      Give a very subtle hint that helps point in the right direction without giving away the answer.
-      The hint should be vague but helpful.
-      Keep it to one short sentence.
-    `;
+    const prompt = configs.prompts.hint
+      .replace('{question}', question)
+      .replace('{correctAnswer}', correctAnswer);
 
     const completion = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "gpt-3.5-turbo",
+      model: configs.models.hint,
     });
 
     const hint = completion.choices[0]?.message?.content || "Sorry, couldn't generate a hint.";
