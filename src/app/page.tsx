@@ -231,23 +231,32 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            {filteredAnswers.map((answer, index) => (
-              <div key={index} className="glass p-6 rounded-lg">
-                <p className="font-semibold">{index + 1}. {answer.question}</p>
-                {answer.skipped ? (
-                  <p className="text-gray-600 mt-2">Skipped</p>
-                ) : (
-                  <p className={`mt-2 ${answer.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                    Your answer: {answer.userAnswer}
-                  </p>
-                )}
-                {(!answer.isCorrect || answer.skipped) && (
-                  <p className="text-green-600 mt-1">
-                    Correct answer: {answer.correctAnswer}
-                  </p>
-                )}
+            {filteredAnswers.length > 0 ? (
+              filteredAnswers.map((answer, index) => (
+                <div key={index} className="glass p-6 rounded-lg">
+                  <p className="font-semibold">{index + 1}. {answer.question}</p>
+                  {answer.skipped ? (
+                    <p className="text-gray-600 mt-2">Skipped</p>
+                  ) : (
+                    <p className={`mt-2 ${answer.isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                      Your answer: {answer.userAnswer}
+                    </p>
+                  )}
+                  {(!answer.isCorrect || answer.skipped) && (
+                    <p className="text-green-600 mt-1">
+                      Correct answer: {answer.correctAnswer}
+                    </p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-center text-gray-500 py-8">
+                {filter === 'correct' && 'No correct answers to show'}
+                {filter === 'incorrect' && 'Horray! No incorrect answers to show.'}
+                {filter === 'skipped' && 'You didn\'t skip any questions.'}
+                {filter === 'all' && 'No answers available.'}
               </div>
-            ))}
+            )}
           </div>
           
           <button
