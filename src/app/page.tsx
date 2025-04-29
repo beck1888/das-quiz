@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import ReactConfetti from 'react-confetti';
+import confetti from 'canvas-confetti';
 import { Quiz, Question } from '@/types/quiz';
 import Select from '@/components/Select';
 import Lottie from 'lottie-react';
@@ -197,6 +197,40 @@ export default function Home() {
     setSavedQuiz(null);
   };
 
+  useEffect(() => {
+    if (showSummary) {
+      const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
+      const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
+      const scorePercentage = totalAnswered > 0 ? (score/totalAnswered) * 100 : 0;
+      
+      if (scorePercentage >= 75) {
+        const defaults = {
+          spread: 360,
+          ticks: 200,
+          gravity: 0.5,
+          decay: 0.94,
+          startVelocity: 30,
+          colors: ['#5D8C7B', '#F2D091', '#F2A679', '#D9695F', '#8C4646'],
+          origin: { y: -0.1, x: 0.5 }
+        };
+
+        function shoot() {
+          confetti({
+            ...defaults,
+            particleCount: 50,
+            scalar: 1.2,
+            shapes: ['circle', 'square'],
+            zIndex: 100,
+          });
+        }
+
+        setTimeout(shoot, 0);
+        setTimeout(shoot, 200);
+        setTimeout(shoot, 400);
+      }
+    }
+  }, [showSummary, answers, attempt]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
@@ -227,7 +261,6 @@ export default function Home() {
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
-        {showConfetti && <ReactConfetti recycle={false} numberOfPieces={500} />}
         <div className="w-full max-w-2xl space-y-6 glass p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           <div className="text-xl text-center mb-6">
