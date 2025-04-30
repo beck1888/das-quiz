@@ -7,6 +7,20 @@ import Lottie from 'lottie-react';
 import loaderAnimation from '../../public/animations/loader.json';
 import Image from 'next/image';
 
+interface Config {
+  settings: {
+    questions: {
+      default: number;
+      min: number;
+      max: number;
+    };
+    defaults: {
+      difficulty: string;
+    };
+    difficulties: { id: string; label: string }[];
+  };
+}
+
 interface Answer {
   question: string;
   userAnswer: string | null;
@@ -17,7 +31,7 @@ interface Answer {
 }
 
 export default function Home() {
-  const [config, setConfig] = useState<any>(null);
+  const [config, setConfig] = useState<Config | null>(null);
   const [topic, setTopic] = useState('');
   const [numQuestions, setNumQuestions] = useState(3);
   const [difficulty, setDifficulty] = useState('medium');
@@ -37,7 +51,7 @@ export default function Home() {
   const [attempt, setAttempt] = useState(1);
   const [previousScores, setPreviousScores] = useState<number[]>([]);
   const [savedQuiz, setSavedQuiz] = useState<Quiz | null>(null);
-  const [showConfetti, setShowConfetti] = useState(false);
+  // Removed unused showConfetti state
 
   useEffect(() => {
     // Load configuration when component mounts
@@ -250,8 +264,6 @@ export default function Home() {
     const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
     const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
     const previousScore = previousScores.length > 0 ? previousScores[previousScores.length - 1] : null;
-    const scorePercentage = totalAnswered > 0 ? (score/totalAnswered) * 100 : 0;
-    const showConfetti = scorePercentage >= 75;
     const filteredAnswers = answers.filter(answer => {
       const matchesAttempt = answer.attempt === attempt;
       if (!matchesAttempt) return false;
