@@ -5,6 +5,7 @@ import { Quiz, Question } from '@/types/quiz';
 import Select from '@/components/Select';
 import Lottie from 'lottie-react';
 import loaderAnimation from '../../public/animations/loader.json';
+import Image from 'next/image';
 
 interface Answer {
   question: string;
@@ -340,9 +341,11 @@ export default function Home() {
               onClick={retryQuiz}
               className="flex-1 bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
             >
-              <img
+              <Image
                 src="/icons/static/redo.svg"
                 alt="Retry"
+                width={20}
+                height={20}
                 className="w-5 h-5"
               />
               Try Again
@@ -351,9 +354,11 @@ export default function Home() {
               onClick={startNewQuiz}
               className="flex-1 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
             >
-              <img
+              <Image
                 src="/icons/static/plus.svg"
                 alt="New Quiz"
+                width={20}
+                height={20}
                 className="w-5 h-5"
               />
               Make New Quiz
@@ -499,14 +504,18 @@ export default function Home() {
               }`}
               title={showAnswer ? "Next question" : "Skip question"}
             >
-              <img
+              <Image
                 src={`/icons/${showAnswer ? 'outline/check-square' : 'outline/x-square'}.svg`}
                 alt={showAnswer ? "Next" : "Skip"}
+                width={20}
+                height={20}
                 className="w-5 h-5 group-hover:hidden"
               />
-              <img
+              <Image
                 src={`/icons/${showAnswer ? 'fill/check-square' : 'fill/x-square'}.svg`}
                 alt={showAnswer ? "Next" : "Skip"}
+                width={20}
+                height={20}
                 className="w-5 h-5 hidden group-hover:block"
               />
               <span className="text-sm font-medium">{showAnswer ? 'Next' : 'Skip'}</span>
