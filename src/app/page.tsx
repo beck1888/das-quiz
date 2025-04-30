@@ -239,6 +239,7 @@ export default function Home() {
             <Lottie animationData={loaderAnimation} loop={true} />
           </div>
           <p className="text-xl">Generating your quiz...</p>
+          <p className="text-gray-500">Please stay on this page.</p>
         </div>
       </div>
     );
