@@ -259,6 +259,13 @@ export default function Home() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
+        <Image
+          src="/icons/static/header.png"
+          alt="Header"
+          width={150}
+          height={50}
+          className="fixed top-4 left-4 z-50"
+        />
         <div className="text-center space-y-4 p-8 rounded-xl">
           <div className="w-64 h-64 mx-auto">
             <Lottie animationData={loaderAnimation} loop={true} />
@@ -278,6 +285,13 @@ export default function Home() {
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
+        <Image
+          src="/icons/static/header.png"
+          alt="Header"
+          width={150}
+          height={50}
+          className="fixed top-4 left-4 z-50"
+        />
         <div className="w-full max-w-2xl space-y-6 card p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           
@@ -468,6 +482,13 @@ export default function Home() {
   if (!quiz) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
+        <Image
+          src="/icons/static/header.png"
+          alt="Header"
+          width={150}
+          height={50}
+          className="fixed top-4 left-4 z-50"
+        />
         <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md p-8 rounded">
           <div className="space-y-2">
             <label htmlFor="topic" className="block text-sm font-medium text-gray-400">
@@ -532,6 +553,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black unselectable">
+      <Image
+        src="/icons/static/header.png"
+        alt="Header"
+        width={150}
+        height={50}
+        className="fixed top-4 left-4 z-50"
+      />
       <div className="w-full max-w-2xl space-y-6 border border-white/20 rounded p-8">
         <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/{numQuestions}</h2>
         {quiz.questions && quiz.questions[currentQuestion] ? (
