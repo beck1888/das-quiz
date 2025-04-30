@@ -225,8 +225,8 @@ export default function Home() {
       audio.play();
 
       const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
-      const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
-      const scorePercentage = totalAnswered > 0 ? (score / totalAnswered) * 100 : 0;
+      const totalQuestions = numQuestions;  // Changed from totalAnswered
+      const scorePercentage = (score / totalQuestions) * 100;  // Use totalQuestions instead
 
       if (scorePercentage > 0) {
         const defaults = {
@@ -272,9 +272,9 @@ export default function Home() {
 
   if (showSummary) {
     const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
-    const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
+    const totalQuestions = numQuestions;  // Changed from totalAnswered
     const previousScore = previousScores.length > 0 ? previousScores[previousScores.length - 1] : null;
-    const scorePercentage = totalAnswered > 0 ? (score/totalAnswered) * 100 : 0;
+    const scorePercentage = (score / totalQuestions) * 100;  // Use totalQuestions instead
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
@@ -316,11 +316,11 @@ export default function Home() {
             {/* Score History */}
             <div className="flex-1 ml-8">
               <div className="text-xl">
-                <div>Score: {score}/{totalAnswered}</div>
+                <div>Score: {score}/{totalQuestions}</div>
                 <div className="text-sm text-gray-400 mt-2">
                   {previousScore !== null ? (
                     <>
-                      Previous: {previousScore}/{totalAnswered}
+                      Previous: {previousScore}/{totalQuestions}
                       <span className={`ml-2 ${
                         previousScore < score ? "text-green-400" : 
                         previousScore > score ? "text-red-400" : 
@@ -407,7 +407,7 @@ export default function Home() {
                 >
                   <p className="font-semibold select-text">{answer.question}</p>
                   {answer.skipped ? (
-                    <p className="text-gray-400 mt-2 unselectable">Skipped</p>
+                    <p className="text-yellow-500 mt-2 unselectable">¿? Skipped</p>
                   ) : (
                     <p className={`mt-2 ${answer.isCorrect ? 'text-green-500' : 'text-red-500'}`}>
                       {answer.isCorrect ? '✓' : '✗'}
