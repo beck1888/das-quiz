@@ -468,7 +468,7 @@ export default function Home() {
   if (!quiz) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
-        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md card p-8 rounded">
+        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md p-8 rounded">
           <div className="space-y-2">
             <label htmlFor="topic" className="block text-sm font-medium text-gray-400">
               Topic
