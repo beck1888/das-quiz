@@ -469,36 +469,54 @@ export default function Home() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
         <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md card p-8 rounded">
-          <input
-            type="text"
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            placeholder="Enter a topic..."
-            className="w-full p-3 bg-black border border-gray-800 rounded text-white focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-500"
-          />
+          <div className="space-y-2">
+            <label htmlFor="topic" className="block text-sm font-medium text-gray-400">
+              Topic
+            </label>
+            <input
+              id="topic"
+              type="text"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              placeholder="Enter a topic..."
+              className="w-full p-3 bg-black border border-gray-800 rounded text-white focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-500"
+            />
+          </div>
           <div className="grid grid-cols-2 gap-4">
-            <Select
-              value={numQuestions}
-              onChange={(value) => setNumQuestions(Number(value))}
-              options={
-                config
-                  ? [...Array(config.settings.questions.max - config.settings.questions.min + 1)].map((_, i) => ({
-                      value: i + config.settings.questions.min,
-                      label: `${i + config.settings.questions.min} Questions`
-                    }))
-                  : []
-              }
-            />
-            <Select
-              value={difficulty}
-              onChange={(value) => setDifficulty(value)}
-              options={
-                config?.settings.difficulties.map((level: { id: string, label: string }) => ({
-                  value: level.id,
-                  label: level.label
-                })) || []
-              }
-            />
+            <div className="space-y-2">
+              <label htmlFor="numQuestions" className="block text-sm font-medium text-gray-400">
+                Number of Questions
+              </label>
+              <Select
+                // id="numQuestions"
+                value={numQuestions}
+                onChange={(value) => setNumQuestions(Number(value))}
+                options={
+                  config
+                    ? [...Array(config.settings.questions.max - config.settings.questions.min + 1)].map((_, i) => ({
+                        value: i + config.settings.questions.min,
+                        label: `${i + config.settings.questions.min} Questions`
+                      }))
+                    : []
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="difficulty" className="block text-sm font-medium text-gray-400">
+                Difficulty
+              </label>
+              <Select
+                // id="difficulty"
+                value={difficulty}
+                onChange={(value) => setDifficulty(value)}
+                options={
+                  config?.settings.difficulties.map((level: { id: string, label: string }) => ({
+                    value: level.id,
+                    label: level.label
+                  })) || []
+                }
+              />
+            </div>
           </div>
           <button
             type="submit"
