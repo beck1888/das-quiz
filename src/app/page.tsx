@@ -331,7 +331,7 @@ export default function Home() {
             {filteredAnswers.length > 0 ? (
               filteredAnswers.map((answer, index) => (
                 <div key={index} className="card p-6 rounded-lg">
-                  <p className="font-semibold select-text">{index + 1}. {answer.question}</p>
+                  <p className="font-semibold select-text">{answer.question}</p>
                   {answer.skipped ? (
                     <p className="text-gray-400 mt-2 unselectable">Skipped</p>
                   ) : (
