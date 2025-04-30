@@ -300,28 +300,44 @@ export default function Home() {
             )}
           </div>
           
-          <div className="flex gap-3 mb-6 flex-wrap hide-selection">
+          <div className="flex w-full border-b border-gray-800 mb-6 hide-selection">
             <button
               onClick={() => setFilter('all')}
-              className={`tag px-4 py-2 rounded-full ${filter === 'all' ? 'active' : ''}`}
+              className={`px-4 py-2 text-sm font-medium relative ${
+                filter === 'all' 
+                  ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400' 
+                  : 'text-gray-400 hover:text-gray-300'
+              }`}
             >
               All
             </button>
             <button
               onClick={() => setFilter('correct')}
-              className={`tag px-4 py-2 rounded-full ${filter === 'correct' ? 'active' : ''}`}
+              className={`px-4 py-2 text-sm font-medium relative ${
+                filter === 'correct'
+                  ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400'
+                  : 'text-gray-400 hover:text-gray-300'
+              }`}
             >
               Correct ({answers.filter(a => a.isCorrect).length})
             </button>
             <button
               onClick={() => setFilter('incorrect')}
-              className={`tag px-4 py-2 rounded-full ${filter === 'incorrect' ? 'active' : ''}`}
+              className={`px-4 py-2 text-sm font-medium relative ${
+                filter === 'incorrect'
+                  ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400'
+                  : 'text-gray-400 hover:text-gray-300'
+              }`}
             >
               Incorrect ({answers.filter(a => !a.isCorrect && !a.skipped).length})
             </button>
             <button
               onClick={() => setFilter('skipped')}
-              className={`tag px-4 py-2 rounded-full ${filter === 'skipped' ? 'active' : ''}`}
+              className={`px-4 py-2 text-sm font-medium relative ${
+                filter === 'skipped'
+                  ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400'
+                  : 'text-gray-400 hover:text-gray-300'
+              }`}
             >
               Skipped ({answers.filter(a => a.skipped).length})
             </button>
