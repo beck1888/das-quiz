@@ -462,14 +462,18 @@ export default function Home() {
                   <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
-                    <img
+                    <Image
                       src="/icons/outline/question-circle.svg"
                       alt="Explain"
+                      width={20}
+                      height={20}
                       className="w-5 h-5 group-hover:hidden"
                     />
-                    <img
+                    <Image
                       src="/icons/fill/question-circle.svg"
                       alt="Explain"
+                      width={20}
+                      height={20}
                       className="w-5 h-5 hidden group-hover:block"
                     />
                     <span className="text-sm font-medium">Explain</span>
@@ -480,14 +484,18 @@ export default function Home() {
                   <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <>
-                    <img
+                    <Image
                       src="/icons/outline/lightbulb.svg"
                       alt="Hint"
+                      width={20}
+                      height={20}
                       className="w-5 h-5 group-hover:hidden"
                     />
-                    <img
+                    <Image
                       src="/icons/fill/lightbulb.svg"
                       alt="Hint"
+                      width={20}
+                      height={20}
                       className="w-5 h-5 hidden group-hover:block"
                     />
                     <span className="text-sm font-medium">Hint</span>
