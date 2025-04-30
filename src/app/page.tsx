@@ -303,9 +303,9 @@ export default function Home() {
           <div className="flex w-full border-b border-gray-800 mb-6 hide-selection">
             <button
               onClick={() => setFilter('all')}
-              className={`px-4 py-2 text-sm font-medium relative ${
+              className={`px-4 py-2 text-sm font-medium relative transition-colors duration-200 ${
                 filter === 'all' 
-                  ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400' 
+                  ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400 after:transition-all after:duration-200' 
                   : 'text-gray-400 hover:text-gray-300'
               }`}
             >
@@ -313,7 +313,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setFilter('correct')}
-              className={`px-4 py-2 text-sm font-medium relative ${
+              className={`px-4 py-2 text-sm font-medium relative transition-colors duration-200 ${
                 filter === 'correct'
                   ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400'
                   : 'text-gray-400 hover:text-gray-300'
@@ -323,7 +323,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setFilter('incorrect')}
-              className={`px-4 py-2 text-sm font-medium relative ${
+              className={`px-4 py-2 text-sm font-medium relative transition-colors duration-200 ${
                 filter === 'incorrect'
                   ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400'
                   : 'text-gray-400 hover:text-gray-300'
@@ -333,7 +333,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setFilter('skipped')}
-              className={`px-4 py-2 text-sm font-medium relative ${
+              className={`px-4 py-2 text-sm font-medium relative transition-colors duration-200 ${
                 filter === 'skipped'
                   ? 'text-blue-400 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-blue-400'
                   : 'text-gray-400 hover:text-gray-300'
@@ -346,26 +346,33 @@ export default function Home() {
           <div className="space-y-4">
             {filteredAnswers.length > 0 ? (
               filteredAnswers.map((answer, index) => (
-                <div key={index} className="card p-6 rounded-lg">
+                <div 
+                  key={index} 
+                  className="card p-6 rounded-lg transition-all duration-200 transform motion-safe:animate-fadeIn"
+                  style={{
+                    animationFillMode: 'both',
+                    animationDelay: `${index * 50}ms`
+                  }}
+                >
                   <p className="font-semibold select-text">{answer.question}</p>
                   {answer.skipped ? (
                     <p className="text-gray-400 mt-2 unselectable">Skipped</p>
                   ) : (
-                    <p className="mt-2">
-                      <strong className="unselectable">You said: </strong>
-                      <span className="select-text">{answer.userAnswer}</span>
+                    <p className={`mt-2 ${answer.isCorrect ? 'text-green-500' : 'text-red-500'}`}>
+                      {answer.isCorrect ? '✓' : '✗'}
+                      <span className="select-text"> {answer.userAnswer}</span>
                     </p>
                   )}
                   {(!answer.isCorrect || answer.skipped) && (
-                    <p className="mt-1">
-                      <strong className="unselectable">Answer: </strong>
+                    <p className="mt-1 text-green-500">
+                        <span className="unselectable">✓ </span>
                       <span className="select-text">{answer.correctAnswer}</span>
                     </p>
                   )}
                 </div>
               ))
             ) : (
-              <div className="text-center text-gray-400 py-8">
+              <div className="text-center text-gray-400 py-8 motion-safe:animate-fadeIn">
                 {filter === 'correct' && 'No correct answers to show'}
                 {filter === 'incorrect' && 'Hooray! No incorrect answers to show.'}
                 {filter === 'skipped' && 'You didn\'t skip any questions.'}
