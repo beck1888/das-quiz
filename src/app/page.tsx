@@ -100,11 +100,17 @@ export default function Home() {
 
   const handleAnswerSelect = (answer: string) => {
     const currentQ = quiz!.questions[currentQuestion];
+    const isCorrect = answer === currentQ.correctAnswer;
+
+    // Load and play sound dynamically
+    const audio = new Audio(isCorrect ? '/sounds/right.mp3' : '/sounds/wrong.mp3');
+    audio.play();
+
     setAnswers(prev => [...prev, {
       question: currentQ.question,
       userAnswer: answer,
       correctAnswer: currentQ.correctAnswer,
-      isCorrect: answer === currentQ.correctAnswer,
+      isCorrect,
       skipped: false,
       attempt: attempt  // Add attempt number
     }]);
@@ -214,10 +220,14 @@ export default function Home() {
 
   useEffect(() => {
     if (showSummary) {
+      // Play level-up sound
+      const audio = new Audio('/sounds/level-up.mp3');
+      audio.play();
+
       const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
       const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
-      const scorePercentage = totalAnswered > 0 ? (score/totalAnswered) * 100 : 0;
-      
+      const scorePercentage = totalAnswered > 0 ? (score / totalAnswered) * 100 : 0;
+
       if (scorePercentage > 0) {
         const defaults = {
           spread: 360,
