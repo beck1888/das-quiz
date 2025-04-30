@@ -30,11 +30,11 @@ export default function Select({ value, onChange, options, className = '' }: Sel
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
+        className="w-full p-2 bg-black border border-gray-800 rounded text-sm text-gray-100 focus:outline-none focus:ring-1 focus:ring-primary flex items-center justify-between"
       >
         <span>{selectedLabel}</span>
         <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -44,12 +44,12 @@ export default function Select({ value, onChange, options, className = '' }: Sel
       </button>
       
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-white rounded-lg shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-10 w-full mt-1 bg-black border border-gray-800 rounded text-sm text-gray-100 max-h-60 overflow-auto">
           {options.map((option) => (
             <button
               key={option.value}
               type="button"
-              className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors"
+              className="w-full px-3 py-2 text-left hover:bg-gray-800 transition-colors"
               onClick={() => {
                 onChange(String(option.value));
                 setIsOpen(false);

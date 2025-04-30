@@ -258,13 +258,13 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
-        <div className="text-center space-y-4 glass p-8 rounded-xl">
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-center space-y-4 p-8 rounded-xl">
           <div className="w-64 h-64 mx-auto">
             <Lottie animationData={loaderAnimation} loop={true} />
           </div>
-          <p className="text-xl">Generating your quiz...</p>
-          <p className="text-gray-500">Please stay on this page.</p>
+          <p className="text-xl text-white">Generating your quiz...</p>
+          <p className="text-gray-400">Please stay on this page.</p>
         </div>
       </div>
     );
@@ -284,16 +284,16 @@ export default function Home() {
     });
 
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
-        <div className="w-full max-w-2xl space-y-6 glass p-8 rounded-xl">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
+        <div className="w-full max-w-2xl space-y-6 card p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           <div className="text-xl text-center mb-6 hide-selection">
             <div>Attempt #{attempt}</div>
             <div>Current Score: {score}/{totalAnswered} ({totalAnswered > 0 ? Math.round((score/totalAnswered) * 100) : 0}%)</div>
             {previousScore !== null && (
-              <div className="text-sm text-gray-600 mt-1">
+              <div className="text-sm text-gray-400 mt-1">
                 Previous Score: {previousScore}/{totalAnswered} ({Math.round((previousScore/totalAnswered) * 100)}%)
-                <span className={previousScore < score ? " text-green-600" : previousScore > score ? " text-red-600" : ""}>
+                <span className={previousScore < score ? " text-green-400" : previousScore > score ? " text-red-400" : ""}>
                   {previousScore < score ? " ↑" : previousScore > score ? " ↓" : " ="}
                 </span>
               </div>
@@ -303,25 +303,25 @@ export default function Home() {
           <div className="flex gap-3 mb-6 flex-wrap hide-selection">
             <button
               onClick={() => setFilter('all')}
-              className={`glass-tag px-4 py-2 rounded-full ${filter === 'all' ? 'active' : ''}`}
+              className={`tag px-4 py-2 rounded-full ${filter === 'all' ? 'active' : ''}`}
             >
               All
             </button>
             <button
               onClick={() => setFilter('correct')}
-              className={`glass-tag px-4 py-2 rounded-full ${filter === 'correct' ? 'active' : ''}`}
+              className={`tag px-4 py-2 rounded-full ${filter === 'correct' ? 'active' : ''}`}
             >
               Correct ({answers.filter(a => a.isCorrect).length})
             </button>
             <button
               onClick={() => setFilter('incorrect')}
-              className={`glass-tag px-4 py-2 rounded-full ${filter === 'incorrect' ? 'active' : ''}`}
+              className={`tag px-4 py-2 rounded-full ${filter === 'incorrect' ? 'active' : ''}`}
             >
               Incorrect ({answers.filter(a => !a.isCorrect && !a.skipped).length})
             </button>
             <button
               onClick={() => setFilter('skipped')}
-              className={`glass-tag px-4 py-2 rounded-full ${filter === 'skipped' ? 'active' : ''}`}
+              className={`tag px-4 py-2 rounded-full ${filter === 'skipped' ? 'active' : ''}`}
             >
               Skipped ({answers.filter(a => a.skipped).length})
             </button>
@@ -330,10 +330,10 @@ export default function Home() {
           <div className="space-y-4">
             {filteredAnswers.length > 0 ? (
               filteredAnswers.map((answer, index) => (
-                <div key={index} className="glass p-6 rounded-lg">
+                <div key={index} className="card p-6 rounded-lg">
                   <p className="font-semibold select-text">{index + 1}. {answer.question}</p>
                   {answer.skipped ? (
-                    <p className="text-gray-600 mt-2 unselectable">Skipped</p>
+                    <p className="text-gray-400 mt-2 unselectable">Skipped</p>
                   ) : (
                     <p className="mt-2">
                       <strong className="unselectable">You said: </strong>
@@ -349,9 +349,9 @@ export default function Home() {
                 </div>
               ))
             ) : (
-              <div className="text-center text-gray-500 py-8">
+              <div className="text-center text-gray-400 py-8">
                 {filter === 'correct' && 'No correct answers to show'}
-                {filter === 'incorrect' && 'Horray! No incorrect answers to show.'}
+                {filter === 'incorrect' && 'Hooray! No incorrect answers to show.'}
                 {filter === 'skipped' && 'You didn\'t skip any questions.'}
                 {filter === 'all' && 'No answers available.'}
               </div>
@@ -361,7 +361,7 @@ export default function Home() {
           <div className="flex gap-3 w-full mt-6">
             <button
               onClick={retryQuiz}
-              className="flex-1 bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+              className="flex-1 bg-primary text-white p-3 rounded transition-colors flex items-center justify-center gap-2 border border-white hover:bg-gray-600"
             >
               <Image
                 src="/icons/static/redo.svg"
@@ -374,7 +374,7 @@ export default function Home() {
             </button>
             <button
               onClick={startNewQuiz}
-              className="flex-1 bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+              className="flex-1 bg-white text-black p-3 rounded hover:bg-gray-400 transition-colors flex items-center justify-center gap-2"
             >
               <Image
                 src="/icons/static/plus.svg"
@@ -386,7 +386,6 @@ export default function Home() {
               Make New Quiz
             </button>
           </div>
-          
         </div>
       </div>
     );
@@ -394,14 +393,14 @@ export default function Home() {
 
   if (!quiz) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
-        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md glass p-8 rounded-xl">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
+        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md card p-8 rounded">
           <input
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="Enter a topic..."
-            className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 select-none"
+            className="w-full p-3 bg-black border border-gray-800 rounded text-white focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-500"
           />
           <div className="grid grid-cols-2 gap-4">
             <Select
@@ -429,7 +428,7 @@ export default function Home() {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white p-3 rounded-lg disabled:opacity-50 hover:bg-blue-600 transition-colors"
+            className="w-full bg-white text-black p-3 rounded disabled:opacity-30 hover:opacity-90 transition-colors font-medium"
             disabled={loading || !topic || !config}
           >
             {loading ? 'Generating...' : 'Generate Quiz'}
@@ -440,8 +439,8 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 unselectable">
-      <div className="w-full max-w-2xl glass p-8 rounded-xl space-y-6">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black unselectable">
+      <div className="w-full max-w-2xl space-y-6 border border-white/20 rounded p-8">
         <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/{numQuestions}</h2>
         {quiz.questions && quiz.questions[currentQuestion] ? (
           <>
@@ -452,14 +451,14 @@ export default function Home() {
                   key={index}
                   onClick={() => handleAnswerSelect(answer)}
                   disabled={showAnswer}
-                  className={`p-4 text-left rounded-lg transition-colors border-2 h-full ${
+                  className={`p-4 text-left rounded transition-colors border ${
                     showAnswer
                       ? answer === quiz.questions[currentQuestion].correctAnswer
-                        ? 'bg-green-100 border-green-500 text-green-700'
+                        ? 'bg-green-900/20 border-green-500 text-green-100 cursor-not-allowed'
                         : answer === selectedAnswer
-                        ? 'bg-red-100 border-red-500 text-red-700'
-                        : 'border-gray-300 opacity-50'
-                      : 'glass-tag border-gray-300 hover:bg-white/40 hover:border-gray-400 active:bg-white/50'
+                        ? 'bg-red-900/20 border-red-500 text-red-100 cursor-not-allowed'
+                        : 'border-white/20 opacity-50 bg-black cursor-not-allowed'
+                      : 'bg-black border-white/20 hover:bg-gray-800 active:bg-gray-700'
                   }`}
                 >
                   {answer}
@@ -471,101 +470,82 @@ export default function Home() {
           <p>Error loading question</p>
         )}
 
-        {(
-          <div className="flex justify-between">
-            <button
-              onClick={showAnswer ? getExplanation : getHint}
-              disabled={showAnswer ? (loadingExplanation || !!explanation) : (loadingHint || !!hint)}
-              className="h-9 px-4 rounded-lg border-2 border-black flex items-center justify-center gap-2 hover:bg-black/5 transition-all group"
-              title={showAnswer ? "Get explanation" : "Get a hint"}
-            >
-              {showAnswer ? (
-                loadingExplanation ? (
-                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <>
-                    <Image
-                      src="/icons/outline/question-circle.svg"
-                      alt="Explain"
-                      width={20}
-                      height={20}
-                      className="w-5 h-5 group-hover:hidden"
-                    />
-                    <Image
-                      src="/icons/fill/question-circle.svg"
-                      alt="Explain"
-                      width={20}
-                      height={20}
-                      className="w-5 h-5 hidden group-hover:block"
-                    />
-                    <span className="text-sm font-medium">Explain</span>
-                  </>
-                )
+        <div className="flex justify-between">
+          <button
+            onClick={showAnswer ? getExplanation : getHint}
+            disabled={showAnswer ? (loadingExplanation || !!explanation) : (loadingHint || !!hint)}
+            className={`h-9 px-4 rounded border border-white/20 flex items-center justify-center gap-2 transition-all min-w-[100px] ${
+              (!showAnswer && (!!hint || loadingHint)) || (showAnswer && (!!explanation || loadingExplanation))
+                ? 'opacity-50 cursor-not-allowed hover:bg-transparent'
+                : 'hover:bg-white/5'
+            }`}
+            title={showAnswer ? "Get explanation" : "Get a hint"}
+          >
+            {showAnswer ? (
+              loadingExplanation ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
-                loadingHint ? (
-                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <>
-                    <Image
-                      src="/icons/outline/lightbulb.svg"
-                      alt="Hint"
-                      width={20}
-                      height={20}
-                      className="w-5 h-5 group-hover:hidden"
-                    />
-                    <Image
-                      src="/icons/fill/lightbulb.svg"
-                      alt="Hint"
-                      width={20}
-                      height={20}
-                      className="w-5 h-5 hidden group-hover:block"
-                    />
-                    <span className="text-sm font-medium">Hint</span>
-                  </>
-                )
-              )}
-            </button>
-            <button
-              onClick={handleNext}
-              className={`h-9 px-4 rounded-lg border-2 flex items-center justify-center gap-2 transition-all group ml-auto ${
-                showAnswer 
-                  ? 'bg-blue-500 hover:bg-blue-600 text-white border-transparent' 
-                  : 'border-black hover:bg-black/5'
-              }`}
-              title={showAnswer ? "Next question" : "Skip question"}
-            >
-              <Image
-                src={`/icons/${showAnswer ? 'outline/check-square' : 'outline/x-square'}.svg`}
-                alt={showAnswer ? "Next" : "Skip"}
-                width={20}
-                height={20}
-                className="w-5 h-5 group-hover:hidden"
-              />
-              <Image
-                src={`/icons/${showAnswer ? 'fill/check-square' : 'fill/x-square'}.svg`}
-                alt={showAnswer ? "Next" : "Skip"}
-                width={20}
-                height={20}
-                className="w-5 h-5 hidden group-hover:block"
-              />
-              <span className="text-sm font-medium">{showAnswer ? 'Next' : 'Skip'}</span>
-            </button>
-          </div>
-        )}
+                <>
+                  <Image
+                    src="/icons/outline/question-circle.svg"
+                    alt="Explain"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                  />
+                  <span className="text-sm font-medium">Explain</span>
+                </>
+              )
+            ) : (
+              loadingHint ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <>
+                  <Image
+                    src="/icons/outline/lightbulb.svg"
+                    alt="Hint"
+                    width={20}
+                    height={20}
+                    className="w-5 h-5"
+                  />
+                  <span className="text-sm font-medium">Hint</span>
+                </>
+              )
+            )}
+          </button>
+          <button
+            onClick={handleNext}
+            className={`h-9 px-4 rounded flex items-center justify-center gap-2 transition-all ml-auto min-w-[100px] ${
+              showAnswer 
+                ? 'bg-white text-black hover:opacity-90' 
+                : 'border border-white/40 hover:bg-white/10'
+            }`}
+            title={showAnswer ? "Next question" : "Skip question"}
+          >
+            <Image
+              src={`/icons/${showAnswer ? 'outline/check-square' : 'outline/x-square'}.svg`}
+              alt={showAnswer ? "Next" : "Skip"}
+              width={20}
+              height={20}
+              className="w-5 h-5"
+            />
+            <span className="text-sm font-medium">{showAnswer ? 'Next' : 'Skip'}</span>
+          </button>
+        </div>
 
         {hint && !showAnswer && (
-          <div className="glass p-4 rounded-lg mt-4">
-            <h3 className="font-bold mb-2">Hint:</h3>
-            <p>{hint}</p>
+          <div className="card p-4 rounded mt-4 border border-white/60 shadow-[0_0_15px_-3px_rgba(255,255,255,0.1)]">
+            <h3 className="font-medium text-sm text-gray-300 mb-2"><b>Hint</b></h3>
+            <p className="text-sm text-gray-100">{hint}</p>
           </div>
         )}
         
         {showAnswer && (
-          <div className="space-y-4 mt-6">
+          <div className="mt-4">
             {explanation ? (
-              <div className="glass p-4 rounded-lg mb-3">
-                <h3 className="font-bold mb-2">Explanation:</h3>
-                <p>{explanation}</p>
+              <div className="card p-4 rounded border border-white/60 shadow-[0_0_15px_-3px_rgba(255,255,255,0.1)]">
+                <h3 className="font-medium text-sm text-gray-300 mb-2">Explanation</h3>
+                <p className="text-sm text-gray-100">{explanation}</p>
               </div>
             ) : null}
           </div>

@@ -3,8 +3,20 @@
 
 /* Define root level CSS variables for theme colors */
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
+  --background: #000000;
+  --foreground: #ffffff;
+  --primary: #0070f3;
+  --secondary: #888888;
+  --accent: #0070f3;
+  --gray-100: #f7f7f7;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #1a1a1a;
+  --gray-800: #121212;
+  --gray-900: #0a0a0a;
 }
 
 /* Define theme variables using CSS custom properties */
@@ -18,50 +30,69 @@
 
 /* Reset HTML and body defaults and prevent overscroll behavior */
 html, body {
-  overscroll-behavior: none; /* Prevents scrolling beyond the viewport boundaries */
-  overflow-y: auto;          /* Enables vertical scrolling */
-  height: 100%;              /* Full viewport height */
-  margin: 0;                 /* Remove default margins */
-  padding: 0;                /* Remove default padding */
+  overscroll-behavior: none;
+  overflow-y: auto;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 /* Apply theme variables to body element */
 body {
-  background: var(--background);     /* Use theme background color */
-  color: var(--foreground);          /* Use theme text color */
-  font-family: var(--font-sans);     /* Use Geist sans-serif font */
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
-/* Glassmorphic styles */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+/* Card styles */
+.card {
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-radius: 0.5rem;
 }
 
-.glass-tag {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(200, 200, 200, 0.5);
-  transition: all 0.3s ease;
+/* Button styles */
+.btn {
+  background: var(--foreground);
+  color: var(--background);
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
 }
 
-.glass-tag:hover {
-  background: rgba(255, 255, 255, 0.4);
-  border-color: rgba(150, 150, 150, 0.8);
+.btn:hover {
+  opacity: 0.9;
 }
 
-.glass-tag.active {
-  background: rgba(59, 130, 246, 0.5);
-  color: white;
-  border-color: rgba(59, 130, 246, 0.8);
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+.btn-primary {
+  background: var(--primary);
+  color: var(--foreground);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--foreground);
+  color: var(--foreground);
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Tag styles */
+.tag {
+  background: var(--gray-800);
+  border: 1px solid var(--gray-700);
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  color: var(--gray-300);
+}
+
+.tag:hover {
+  background: var(--gray-700);
+  color: var(--foreground);
 }
 
 /* Hide text selection color */
