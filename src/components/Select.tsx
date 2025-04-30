@@ -44,20 +44,23 @@ export default function Select({ value, onChange, options, className = '' }: Sel
       </button>
       
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-black border border-gray-800 rounded text-sm text-gray-100 max-h-60 overflow-auto">
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              className="w-full px-3 py-2 text-left hover:bg-gray-800 transition-colors"
-              onClick={() => {
-                onChange(String(option.value));
-                setIsOpen(false);
-              }}
-            >
-              {option.label}
-            </button>
-          ))}
+        <div className="absolute z-10 w-full mt-1 bg-black border border-gray-800 rounded text-sm text-gray-100 max-h-60 overflow-auto [scrollbar-width:none] [-ms-overflow-style:none]" 
+          style={{ WebkitOverflowScrolling: 'touch' }}>
+          <div className="[&::-webkit-scrollbar]:hidden">
+            {options.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className="w-full px-3 py-2 text-left hover:bg-gray-800 transition-colors"
+                onClick={() => {
+                  onChange(String(option.value));
+                  setIsOpen(false);
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

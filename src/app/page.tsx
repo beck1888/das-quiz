@@ -258,7 +258,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-black relative">
         <Image
           src="/icons/static/header.png"
           alt="Header"
@@ -266,6 +266,9 @@ export default function Home() {
           height={50}
           className="fixed top-4 left-4 z-50"
         />
+        <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
+          AI generated. For reference only.
+        </span>
         <div className="text-center space-y-4 p-8 rounded-xl">
           <div className="w-64 h-64 mx-auto">
             <Lottie animationData={loaderAnimation} loop={true} />
@@ -284,7 +287,7 @@ export default function Home() {
     const scorePercentage = (score / totalQuestions) * 100;
 
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
         <Image
           src="/icons/static/header.png"
           alt="Header"
@@ -292,6 +295,9 @@ export default function Home() {
           height={50}
           className="fixed top-4 left-4 z-50"
         />
+        <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
+          AI generated. For reference only.
+        </span>
         <div className="w-full max-w-2xl space-y-6 card p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
           
@@ -481,7 +487,7 @@ export default function Home() {
 
   if (!quiz) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
         <Image
           src="/icons/static/header.png"
           alt="Header"
@@ -489,9 +495,12 @@ export default function Home() {
           height={50}
           className="fixed top-4 left-4 z-50"
         />
+        <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
+          AI generated. For reference only.
+        </span>
         <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md p-8 rounded">
           <div className="space-y-2">
-            <label htmlFor="topic" className="block text-sm font-medium text-gray-400">
+            <label htmlFor="topic" className="block text-sm font-medium text-gray-400 select-none">
               Topic
             </label>
             <input
@@ -500,12 +509,12 @@ export default function Home() {
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               placeholder="Enter a topic..."
-              className="w-full p-3 bg-black border border-gray-800 rounded text-white focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-500"
+              className="w-full p-3 bg-black border border-gray-800 rounded text-white focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-500 select-none"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label htmlFor="numQuestions" className="block text-sm font-medium text-gray-400">
+              <label htmlFor="numQuestions" className="block text-sm font-medium text-gray-400 select-none">
                 Number of Questions
               </label>
               <Select
@@ -523,7 +532,7 @@ export default function Home() {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="difficulty" className="block text-sm font-medium text-gray-400">
+              <label htmlFor="difficulty" className="block text-sm font-medium text-gray-400 select-none">
                 Difficulty
               </label>
               <Select
@@ -552,7 +561,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black unselectable">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
       <Image
         src="/icons/static/header.png"
         alt="Header"
@@ -560,6 +569,9 @@ export default function Home() {
         height={50}
         className="fixed top-4 left-4 z-50"
       />
+      <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
+        AI generated. For reference only.
+      </span>
       <div className="w-full max-w-2xl space-y-6 border border-white/20 rounded p-8">
         <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/{numQuestions}</h2>
         {quiz.questions && quiz.questions[currentQuestion] ? (
@@ -654,7 +666,7 @@ export default function Home() {
         </div>
 
         {hint && !showAnswer && (
-          <div className="card p-4 rounded mt-4 border border-white/60 shadow-[0_0_15px_-3px_rgba(255,255,255,0.1)]">
+          <div className="card p-4 rounded mt-4 border border-white/20 bg-white/5 backdrop-blur-sm shadow-[0_0_20px_-5px_rgba(255,255,255,0.2)]">
             <h3 className="font-medium text-sm text-gray-300 mb-2"><b>Hint</b></h3>
             <p className="text-sm text-gray-100">{hint}</p>
           </div>
@@ -663,7 +675,7 @@ export default function Home() {
         {showAnswer && (
           <div className="mt-4">
             {explanation ? (
-              <div className="card p-4 rounded border border-white/60 shadow-[0_0_15px_-3px_rgba(255,255,255,0.1)]">
+              <div className="card p-4 rounded border border-white/20 bg-white/5 backdrop-blur-sm shadow-[0_0_20px_-5px_rgba(255,255,255,0.2)]">
                 <h3 className="font-medium text-sm text-gray-300 mb-2">Explanation</h3>
                 <p className="text-sm text-gray-100">{explanation}</p>
               </div>
