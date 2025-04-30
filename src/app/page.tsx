@@ -225,8 +225,8 @@ export default function Home() {
       audio.play();
 
       const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
-      const totalQuestions = numQuestions;  // Changed from totalAnswered
-      const scorePercentage = (score / totalQuestions) * 100;  // Use totalQuestions instead
+      const totalQuestions = numQuestions;
+      const scorePercentage = (score / totalQuestions) * 100;
 
       if (scorePercentage > 0) {
         const defaults = {
@@ -254,7 +254,7 @@ export default function Home() {
         setTimeout(shoot, 400);
       }
     }
-  }, [showSummary, answers, attempt]);
+  }, [showSummary, answers, attempt, numQuestions]);
 
   if (loading) {
     return (
@@ -272,9 +272,9 @@ export default function Home() {
 
   if (showSummary) {
     const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
-    const totalQuestions = numQuestions;  // Changed from totalAnswered
+    const totalQuestions = numQuestions;
     const previousScore = previousScores.length > 0 ? previousScores[previousScores.length - 1] : null;
-    const scorePercentage = (score / totalQuestions) * 100;  // Use totalQuestions instead
+    const scorePercentage = (score / totalQuestions) * 100;
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
