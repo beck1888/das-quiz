@@ -331,7 +331,7 @@ export default function Home() {
                       </span>
                     </>
                   ) : (
-                    "No previous attempts"
+                    "First Attempt"
                   )}
                 </div>
               </div>
