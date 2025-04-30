@@ -274,32 +274,71 @@ export default function Home() {
     const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
     const totalAnswered = answers.filter(a => !a.skipped && a.attempt === attempt).length;
     const previousScore = previousScores.length > 0 ? previousScores[previousScores.length - 1] : null;
-    const filteredAnswers = answers.filter(answer => {
-      const matchesAttempt = answer.attempt === attempt;
-      if (!matchesAttempt) return false;
-      if (filter === 'correct') return answer.isCorrect;
-      if (filter === 'incorrect') return !answer.isCorrect && !answer.skipped;
-      if (filter === 'skipped') return answer.skipped;
-      return true;
-    });
+    const scorePercentage = totalAnswered > 0 ? (score/totalAnswered) * 100 : 0;
 
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black">
         <div className="w-full max-w-2xl space-y-6 card p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
-          <div className="text-xl text-center mb-6 hide-selection">
-            <div>Attempt #{attempt}</div>
-            <div>Current Score: {score}/{totalAnswered} ({totalAnswered > 0 ? Math.round((score/totalAnswered) * 100) : 0}%)</div>
-            {previousScore !== null && (
-              <div className="text-sm text-gray-400 mt-1">
-                Previous Score: {previousScore}/{totalAnswered} ({Math.round((previousScore/totalAnswered) * 100)}%)
-                <span className={previousScore < score ? " text-green-400" : previousScore > score ? " text-red-400" : ""}>
-                  {previousScore < score ? " ↑" : previousScore > score ? " ↓" : " ="}
-                </span>
-              </div>
-            )}
-          </div>
           
+          <div className="flex items-center justify-between mb-6 hide-selection">
+            {/* Score Ring */}
+            <div className="relative w-32 h-32">
+              <svg className="w-full h-full transform -rotate-90">
+                {/* Background circle */}
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="58"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="transparent"
+                  className="text-gray-800"
+                />
+                {/* Score circle */}
+                <circle
+                  cx="64"
+                  cy="64"
+                  r="58"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                  fill="transparent"
+                  strokeDasharray={`${2 * Math.PI * 58}`}
+                  strokeDashoffset={`${2 * Math.PI * 58 * (1 - scorePercentage / 100)}`}
+                  className="text-blue-500 transition-all duration-1000"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-2xl font-bold">{Math.round(scorePercentage)}%</span>
+              </div>
+            </div>
+
+            {/* Score History */}
+            <div className="flex-1 ml-8">
+              <div className="text-xl">
+                <div>Score: {score}/{totalAnswered}</div>
+                <div className="text-sm text-gray-400 mt-2">
+                  {previousScore !== null ? (
+                    <>
+                      Previous: {previousScore}/{totalAnswered}
+                      <span className={`ml-2 ${
+                        previousScore < score ? "text-green-400" : 
+                        previousScore > score ? "text-red-400" : 
+                        previousScore === score ? "text-yellow-400" :
+                        "text-gray-400"
+                      }`}>
+                        {previousScore < score ? "↑" : previousScore > score ? "↓" : "="}
+                      </span>
+                    </>
+                  ) : (
+                    "No previous attempts"
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Rest of the existing summary content */}
           <div className="flex w-full border-b border-gray-800 mb-6 hide-selection">
             <button
               onClick={() => setFilter('all')}
@@ -344,8 +383,20 @@ export default function Home() {
           </div>
 
           <div className="space-y-4">
-            {filteredAnswers.length > 0 ? (
-              filteredAnswers.map((answer, index) => (
+            {(answers.filter(answer => {
+              if (filter === 'all') return true;
+              if (filter === 'correct') return answer.isCorrect;
+              if (filter === 'incorrect') return !answer.isCorrect && !answer.skipped;
+              if (filter === 'skipped') return answer.skipped;
+              return false;
+            }).length > 0) ? (
+              answers.filter(answer => {
+                if (filter === 'all') return true;
+                if (filter === 'correct') return answer.isCorrect;
+                if (filter === 'incorrect') return !answer.isCorrect && !answer.skipped;
+                if (filter === 'skipped') return answer.skipped;
+                return false;
+              }).map((answer, index) => (
                 <div 
                   key={index} 
                   className="card p-6 rounded-lg transition-all duration-200 transform motion-safe:animate-fadeIn"
