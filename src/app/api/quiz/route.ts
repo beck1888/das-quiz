@@ -14,17 +14,24 @@ const getConfigs = () => {
   return configData;
 };
 
-export async function POST(req: NextRequest) {
-  const { topic, numQuestions, difficulty } = await req.json();
-  const configs = getConfigs();
+const allowedOrigin = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
 
-  const promptTemplate = configs.prompts.quiz;
-  const prompt = promptTemplate
-    .replace('{numQuestions}', numQuestions)
-    .replace('{topic}', topic)
-    .replace(/{difficulty}/g, difficulty);
+export async function POST(req: NextRequest) {
+  const origin = req.headers.get('origin');
+  if (origin !== allowedOrigin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
 
   try {
+    const { topic, numQuestions, difficulty } = await req.json();
+    const configs = getConfigs();
+
+    const promptTemplate = configs.prompts.quiz;
+    const prompt = promptTemplate
+      .replace('{numQuestions}', numQuestions)
+      .replace('{topic}', topic)
+      .replace(/{difficulty}/g, difficulty);
+
     const completion = await openai.chat.completions.create({
       model: configs.models.quiz,
       messages: [{ role: "user", content: prompt }],

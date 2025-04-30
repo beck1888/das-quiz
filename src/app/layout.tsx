@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Next.js Template App",
-  description: "Blank Template for Next JS without Vercel's Boilerplate",
+  title: "Das Quiz",
+  description: "Use AI to create practice quizzes on any topic!",
 };
 
 export default function RootLayout({

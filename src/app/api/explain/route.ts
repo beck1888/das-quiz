@@ -13,7 +13,14 @@ const getConfigs = () => {
   return configData;
 };
 
+const allowedOrigin = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+
 export async function POST(req: Request) {
+  const origin = req.headers.get('origin');
+  if (origin !== allowedOrigin) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
+
   try {
     const { question, correctAnswer, userAnswer } = await req.json();
     const configs = getConfigs();
