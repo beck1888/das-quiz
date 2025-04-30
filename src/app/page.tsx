@@ -419,7 +419,7 @@ export default function Home() {
               }).map((answer, index) => (
                 <div 
                   key={index} 
-                  className="card p-6 rounded-lg transition-all duration-200 transform motion-safe:animate-fadeIn"
+                  className="card p-6 rounded-lg transition-all duration-200 transform motion-safe:animate-fadeIn border-[3px] border-white/60"
                   style={{
                     animationFillMode: 'both',
                     animationDelay: `${index * 50}ms`
