@@ -263,7 +263,7 @@ export default function Home() {
       <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
         <div className="w-full max-w-2xl space-y-6 glass p-8 rounded-xl">
           <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
-          <div className="text-xl text-center mb-6">
+          <div className="text-xl text-center mb-6 hide-selection">
             <div>Attempt #{attempt}</div>
             <div>Current Score: {score}/{totalAnswered} ({totalAnswered > 0 ? Math.round((score/totalAnswered) * 100) : 0}%)</div>
             {previousScore !== null && (
@@ -276,7 +276,7 @@ export default function Home() {
             )}
           </div>
           
-          <div className="flex gap-3 mb-6 flex-wrap">
+          <div className="flex gap-3 mb-6 flex-wrap hide-selection">
             <button
               onClick={() => setFilter('all')}
               className={`glass-tag px-4 py-2 rounded-full ${filter === 'all' ? 'active' : ''}`}
@@ -307,17 +307,19 @@ export default function Home() {
             {filteredAnswers.length > 0 ? (
               filteredAnswers.map((answer, index) => (
                 <div key={index} className="glass p-6 rounded-lg">
-                  <p className="font-semibold">{index + 1}. {answer.question}</p>
+                  <p className="font-semibold select-text">{index + 1}. {answer.question}</p>
                   {answer.skipped ? (
-                    <p className="text-gray-600 mt-2">Skipped</p>
+                    <p className="text-gray-600 mt-2 unselectable">Skipped</p>
                   ) : (
                     <p className="mt-2">
-                      <strong>You said:</strong> {answer.userAnswer}
+                      <strong className="unselectable">You said: </strong>
+                      <span className="select-text">{answer.userAnswer}</span>
                     </p>
                   )}
                   {(!answer.isCorrect || answer.skipped) && (
                     <p className="mt-1">
-                      <strong>Answer:</strong> {answer.correctAnswer}
+                      <strong className="unselectable">Answer: </strong>
+                      <span className="select-text">{answer.correctAnswer}</span>
                     </p>
                   )}
                 </div>
@@ -371,7 +373,7 @@ export default function Home() {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="Enter a topic..."
-            className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 glass rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 select-none"
           />
           <div className="grid grid-cols-2 gap-4">
             <Select
@@ -410,13 +412,13 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 unselectable">
       <div className="w-full max-w-2xl glass p-8 rounded-xl space-y-6">
         <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/{numQuestions}</h2>
         {quiz.questions && quiz.questions[currentQuestion] ? (
           <>
-            <p className="text-xl mb-6">{quiz.questions[currentQuestion].question}</p>
-            <div className="grid grid-cols-2 gap-3">
+            <p className="text-xl mb-6 select-text">{quiz.questions[currentQuestion].question}</p>
+            <div className="grid grid-cols-2 gap-3 unselectable">
               {shuffledAnswers.map((answer, index) => (
                 <button
                   key={index}
