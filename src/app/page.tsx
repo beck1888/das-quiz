@@ -327,7 +327,7 @@ export default function Home() {
                         previousScore === score ? "text-yellow-400" :
                         "text-gray-400"
                       }`}>
-                        {previousScore < score ? "↑" : previousScore > score ? "↓" : "="}
+                        {previousScore < score ? "↑" : previousScore > score ? "↓" : "→"}
                       </span>
                     </>
                   ) : (
