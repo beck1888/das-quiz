@@ -407,7 +407,7 @@ export default function Home() {
                 >
                   <p className="font-semibold select-text">{answer.question}</p>
                   {answer.skipped ? (
-                    <p className="text-yellow-500 mt-2 unselectable">¿? Skipped</p>
+                    <p className="text-yellow-500 mt-2 unselectable">⚠︎ Skipped</p>
                   ) : (
                     <p className={`mt-2 ${answer.isCorrect ? 'text-green-500' : 'text-red-500'}`}>
                       {answer.isCorrect ? '✓' : '✗'}
