@@ -120,6 +120,7 @@ export default function Home() {
 
   const getExplanation = async () => {
     setLoadingExplanation(true);
+    setExplanation('');
     try {
       const currentQ = quiz!.questions[currentQuestion];
       const response = await fetch('/api/explain', {
@@ -131,8 +132,20 @@ export default function Home() {
           userAnswer: selectedAnswer,
         }),
       });
-      const data = await response.json();
-      setExplanation(data.explanation);
+
+      if (!response.ok) throw new Error('Failed to get explanation');
+      if (!response.body) throw new Error('No response body');
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const text = decoder.decode(value);
+        setExplanation(prev => (prev || '') + text);
+      }
     } catch (error) {
       console.error('Failed to get explanation:', error);
     }
@@ -141,6 +154,7 @@ export default function Home() {
 
   const getHint = async () => {
     setLoadingHint(true);
+    setHint('');
     try {
       const currentQ = quiz!.questions[currentQuestion];
       const response = await fetch('/api/hint', {
@@ -151,8 +165,20 @@ export default function Home() {
           correctAnswer: currentQ.correctAnswer,
         }),
       });
-      const data = await response.json();
-      setHint(data.hint);
+
+      if (!response.ok) throw new Error('Failed to get hint');
+      if (!response.body) throw new Error('No response body');
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const text = decoder.decode(value);
+        setHint(prev => (prev || '') + text);
+      }
     } catch (error) {
       console.error('Failed to get hint:', error);
     }

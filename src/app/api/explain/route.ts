@@ -30,14 +30,31 @@ export async function POST(req: Request) {
       .replace('{correctAnswer}', correctAnswer)
       .replace('{userAnswer}', userAnswer);
 
-    const completion = await openai.chat.completions.create({
+    const stream = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: configs.models.explanation,
+      stream: true,
     });
 
-    const explanation = completion.choices[0]?.message?.content || "Sorry, couldn't generate an explanation.";
+    const encoder = new TextEncoder();
+    const customStream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content;
+          if (content) {
+            controller.enqueue(encoder.encode(content));
+          }
+        }
+        controller.close();
+      },
+    });
 
-    return NextResponse.json({ explanation });
+    return new Response(customStream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache',
+      },
+    });
   } catch (error) {
     console.error('Explanation error:', error);
     return NextResponse.json({ error: 'Failed to generate explanation' }, { status: 500 });
