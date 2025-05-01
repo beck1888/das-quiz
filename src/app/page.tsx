@@ -230,6 +230,18 @@ export default function Home() {
     }
   };
 
+  // Add keyboard event listener for Enter key
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && quiz && !showSummary && showAnswer) {
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keypress', handleKeyPress);
+    return () => window.removeEventListener('keypress', handleKeyPress);
+  }, [quiz, showSummary, showAnswer]);
+
   const startNewQuiz = () => {
     setQuiz(null);
     setTopic('');
