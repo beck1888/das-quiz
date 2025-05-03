@@ -7,7 +7,7 @@ import QuizQuestion from '@/components/QuizQuestion';
 import QuizSummary from '@/components/QuizSummary';
 import Lottie from 'lottie-react';
 import loaderAnimation from '../../public/animations/loader.json';
-import Image from 'next/image';
+import Settings from '@/components/Settings';
 
 interface Config {
   settings: {
@@ -191,12 +191,12 @@ export default function Home() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black relative">
+        <Settings />
         <div className="text-center space-y-4 p-8 rounded-xl">
         <p className="text-4xl text-white font-bold">Generating your quiz...</p>
           <div className="w-80 h-80 mx-auto">
             <Lottie animationData={loaderAnimation} loop={true} />
           </div>
-          {/* <p className="text-gray-400">Please stay on this page.</p> */}
         </div>
       </div>
     );
@@ -204,23 +204,32 @@ export default function Home() {
 
   if (showSummary) {
     return (
-      <QuizSummary
-        answers={answers}
-        numQuestions={quiz!.questions.length}
-        previousScores={previousScores}
-        attempt={attempt}
-        onRetry={retryQuiz}
-        onNewQuiz={startNewQuiz}
-      />
+      <>
+        <Settings />
+        <QuizSummary
+          answers={answers}
+          numQuestions={quiz!.questions.length}
+          previousScores={previousScores}
+          attempt={attempt}
+          onRetry={retryQuiz}
+          onNewQuiz={startNewQuiz}
+        />
+      </>
     );
   }
 
   if (!quiz) {
-    return <QuizForm onSubmit={generateQuiz} loading={loading} config={config} />;
+    return (
+      <>
+        <Settings />
+        <QuizForm onSubmit={generateQuiz} loading={loading} config={config} />
+      </>
+    );
   }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
+      <Settings />
       <QuizQuestion
         question={quiz.questions[currentQuestion]}
         currentQuestion={currentQuestion}
