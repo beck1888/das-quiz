@@ -6,6 +6,8 @@ export interface Question {
 
 export interface Quiz {
   questions: Question[];
+  topic?: string;
+  difficulty?: string;
 }
 
 export interface Answer {

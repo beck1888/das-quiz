@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { Quiz, Question } from '@/types/quiz';
+import { Quiz, Question, Answer } from '@/types/quiz';
 import QuizForm from '@/components/QuizForm';
 import QuizQuestion from '@/components/QuizQuestion';
 import QuizSummary from '@/components/QuizSummary';
@@ -9,6 +9,8 @@ import Lottie from 'lottie-react';
 import loaderAnimation from '../../public/animations/loader.json';
 import Settings from '@/components/Settings';
 import { useSettings } from '@/stores/settings';
+import { QuizDatabase } from '@/services/QuizDatabase';
+import History from '@/components/History';
 
 interface Config {
   settings: {
@@ -22,15 +24,6 @@ interface Config {
     };
     difficulties: { id: string; label: string }[];
   };
-}
-
-interface Answer {
-  question: string;
-  userAnswer: string | null;
-  correctAnswer: string;
-  isCorrect: boolean;
-  skipped: boolean;
-  attempt: number;
 }
 
 export default function Home() {
@@ -48,6 +41,8 @@ export default function Home() {
   const [previousScores, setPreviousScores] = useState<number[]>([]);
   const [savedQuiz, setSavedQuiz] = useState<Quiz | null>(null);
 
+  const quizDb = new QuizDatabase();
+  
   useEffect(() => {
     fetch('/data/configs.json')
       .then(res => res.json())
@@ -67,21 +62,22 @@ export default function Home() {
         body: JSON.stringify({ topic, numQuestions, difficulty }),
       });
       const data = await response.json();
-      setQuiz(data.quiz);
-      setSavedQuiz(data.quiz);
+      // Add topic and difficulty to quiz object
+      const quizWithMeta = {
+        ...data.quiz,
+        topic,
+        difficulty
+      };
+      setQuiz(quizWithMeta);
+      setSavedQuiz(quizWithMeta);
       setCurrentQuestion(0);
-      if (data.quiz?.questions[0]) {
-        setShuffledAnswers(shuffleAnswers(data.quiz.questions[0]));
+      if (quizWithMeta?.questions[0]) {
+        setShuffledAnswers(quizWithMeta.questions[0].incorrectAnswers.concat(quizWithMeta.questions[0].correctAnswer).sort(() => Math.random() - 0.5));
       }
     } catch (error) {
       console.error('Failed to generate quiz:', error);
     }
     setLoading(false);
-  };
-
-  const shuffleAnswers = (question: Question) => {
-    const answers = [...question.incorrectAnswers, question.correctAnswer];
-    return answers.sort(() => Math.random() - 0.5);
   };
 
   const handleAnswerSelect = (answer: string) => {
@@ -120,7 +116,7 @@ export default function Home() {
     if (currentQuestion < quiz!.questions.length - 1) {
       const nextQuestion = currentQuestion + 1;
       setCurrentQuestion(nextQuestion);
-      setShuffledAnswers(shuffleAnswers(quiz!.questions[nextQuestion]));
+      setShuffledAnswers(quiz!.questions[nextQuestion].incorrectAnswers.concat(quiz!.questions[nextQuestion].correctAnswer).sort(() => Math.random() - 0.5));
       setSelectedAnswer(null);
       setShowAnswer(false);
     } else {
@@ -139,7 +135,7 @@ export default function Home() {
     setAnswers([]);
     setAttempt(prev => prev + 1);
     if (savedQuiz?.questions[0]) {
-      setShuffledAnswers(shuffleAnswers(savedQuiz.questions[0]));
+      setShuffledAnswers(savedQuiz.questions[0].incorrectAnswers.concat(savedQuiz.questions[0].correctAnswer).sort(() => Math.random() - 0.5));
     }
   };
 
@@ -156,13 +152,40 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (showSummary && isSoundEnabled) {
-      const audio = new Audio('/sounds/level-up.mp3');
-      audio.play();
-
+    if (showSummary && quiz) {
       const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
-      const totalQuestions = quiz!.questions.length;
-      const scorePercentage = (score / totalQuestions) * 100;
+      
+      // Map answers to include incorrectAnswers
+      const answersWithOptions = answers.filter(a => a.attempt === attempt).map(answer => {
+        const question = quiz.questions.find(q => q.question === answer.question);
+        return {
+          ...answer,
+          incorrectAnswers: question ? question.incorrectAnswers : []
+        };
+      });
+
+      // Get previous quiz result for the same topic if it exists
+      quizDb.getQuizHistory().then(history => {
+        const lastQuiz = history.find(q => q.topic === quiz.topic && q.difficulty === quiz.difficulty);
+        
+        quizDb.addQuizResult({
+          timestamp: Date.now(),
+          topic: quiz.topic || 'Unknown',
+          difficulty: quiz.difficulty || 'standard',
+          score,
+          lastScore: lastQuiz?.score,
+          totalQuestions: quiz.questions.length,
+          answers: answersWithOptions,
+          attempt
+        });
+      });
+
+      if (isSoundEnabled) {
+        const audio = new Audio('/sounds/level-up.mp3');
+        audio.play();
+      }
+
+      const scorePercentage = (score / quiz.questions.length) * 100;
 
       if (scorePercentage > 0) {
         const defaults = {
@@ -192,58 +215,113 @@ export default function Home() {
     }
   }, [showSummary, answers, attempt, quiz, isSoundEnabled]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black relative">
-        <Settings />
-        <div className="text-center space-y-4 p-8 rounded-xl">
-        <p className="text-4xl text-white font-bold">Generating your quiz...</p>
-          <div className="w-80 h-80 mx-auto">
-            <Lottie animationData={loaderAnimation} loop={true} />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Update clear data functionality
+  const clearAllData = async () => {
+    await quizDb.deleteAllHistory();
+    localStorage.clear();
+  };
 
-  if (showSummary) {
-    return (
-      <>
-        <Settings />
-        <QuizSummary
-          answers={answers}
-          numQuestions={quiz!.questions.length}
-          previousScores={previousScores}
-          attempt={attempt}
-          onRetry={retryQuiz}
-          onNewQuiz={startNewQuiz}
-        />
-      </>
-    );
-  }
+  const handleViewQuiz = (quizAnswers: Answer[], numQuestions: number) => {
+    setAnswers(quizAnswers);
+    setSavedQuiz(null);
+    setShowSummary(true);
+    setPreviousScores([]);
+  };
 
-  if (!quiz) {
-    return (
-      <>
-        <Settings />
-        <QuizForm onSubmit={generateQuiz} loading={loading} config={config} />
-      </>
-    );
-  }
+  const handlePlayQuiz = (entry: { 
+    topic: string, 
+    difficulty: string, 
+    answers: {
+      question: string,
+      correctAnswer: string,
+      incorrectAnswers: string[],
+      userAnswer: string | null,
+      isCorrect: boolean,
+      skipped: boolean,
+      attempt: number
+    }[],
+    totalQuestions: number,
+    score: number
+  }) => {
+    // Reconstruct quiz from history entry using stored incorrect answers
+    const questions: Question[] = entry.answers.map(answer => ({
+      question: answer.question,
+      correctAnswer: answer.correctAnswer,
+      incorrectAnswers: answer.incorrectAnswers
+    }));
+
+    const reconstructedQuiz: Quiz = {
+      questions,
+      topic: entry.topic,
+      difficulty: entry.difficulty
+    };
+
+    // Set up quiz state with previous score
+    setQuiz(reconstructedQuiz);
+    setSavedQuiz(reconstructedQuiz);
+    setAnswers([]);
+    setShowSummary(false);
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setShowAnswer(false);
+    setPreviousScores([entry.score]); // Set the previous score
+    setAttempt(1);
+    
+    // Set up first question's shuffled answers
+    if (reconstructedQuiz.questions[0]) {
+      setShuffledAnswers(
+        reconstructedQuiz.questions[0].incorrectAnswers
+          .concat(reconstructedQuiz.questions[0].correctAnswer)
+          .sort(() => Math.random() - 0.5)
+      );
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
-      <Settings />
-      <QuizQuestion
-        question={quiz.questions[currentQuestion]}
-        currentQuestion={currentQuestion}
-        numQuestions={quiz.questions.length}
-        onAnswer={handleAnswerSelect}
-        onNext={handleNext}
-        showAnswer={showAnswer}
-        selectedAnswer={selectedAnswer}
-        shuffledAnswers={shuffledAnswers}
-      />
-    </div>
+    <>
+      <History onViewQuiz={handleViewQuiz} onPlayQuiz={handlePlayQuiz} />
+      {loading ? (
+        <div className="min-h-screen flex items-center justify-center bg-black relative">
+          <Settings />
+          <div className="text-center space-y-4 p-8 rounded-xl">
+            <p className="text-4xl text-white font-bold">Generating your quiz...</p>
+            <div className="w-80 h-80 mx-auto">
+              <Lottie animationData={loaderAnimation} loop={true} />
+            </div>
+          </div>
+        </div>
+      ) : showSummary ? (
+        <>
+          <Settings />
+          <QuizSummary
+            answers={answers}
+            numQuestions={quiz ? quiz.questions.length : answers.length}
+            previousScores={previousScores}
+            attempt={attempt}
+            onRetry={retryQuiz}
+            onNewQuiz={startNewQuiz}
+          />
+        </>
+      ) : !quiz ? (
+        <>
+          <Settings />
+          <QuizForm onSubmit={generateQuiz} loading={loading} config={config} />
+        </>
+      ) : (
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
+          <Settings />
+          <QuizQuestion
+            question={quiz.questions[currentQuestion]}
+            currentQuestion={currentQuestion}
+            numQuestions={quiz.questions.length}
+            onAnswer={handleAnswerSelect}
+            onNext={handleNext}
+            showAnswer={showAnswer}
+            selectedAnswer={selectedAnswer}
+            shuffledAnswers={shuffledAnswers}
+          />
+        </div>
+      )}
+    </>
   );
 }
