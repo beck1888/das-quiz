@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { Quiz, Question } from '@/types/quiz';
 import Select from '@/components/Select';
+import InfoBox from '@/components/InfoBox';
 import Lottie from 'lottie-react';
 import loaderAnimation from '../../public/animations/loader.json';
 import Image from 'next/image';
@@ -704,19 +705,17 @@ export default function Home() {
         </div>
 
         {hint && !showAnswer && (
-          <div className="card p-4 rounded mt-4 border border-white/20 bg-white/5 backdrop-blur-sm shadow-[0_0_20px_-5px_rgba(255,255,255,0.2)]">
-            <h3 className="font-medium text-sm text-gray-300 mb-2"><b>Hint</b></h3>
-            <p className="text-sm text-gray-100">{hint}</p>
-          </div>
+          <InfoBox title="Hint" className="mt-4">
+            {hint}
+          </InfoBox>
         )}
         
         {showAnswer && (
           <div className="mt-4">
             {explanation ? (
-              <div className="card p-4 rounded border border-white/20 bg-white/5 backdrop-blur-sm shadow-[0_0_20px_-5px_rgba(255,255,255,0.2)]">
-                <h3 className="font-medium text-sm text-gray-300 mb-2">Explanation</h3>
-                <p className="text-sm text-gray-100">{explanation}</p>
-              </div>
+              <InfoBox title="Explanation">
+                {explanation}
+              </InfoBox>
             ) : null}
           </div>
         )}
