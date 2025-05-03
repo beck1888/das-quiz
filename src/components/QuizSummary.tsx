@@ -32,13 +32,14 @@ export default function QuizSummary({
   const quizTitle = quizDifficulty 
     ? `${formattedTopic} (${quizDifficulty.charAt(0).toUpperCase() + quizDifficulty.slice(1)})`
     : formattedTopic;
+  const showTitle = quizTopic !== 'Unknown';
 
   return (
     <div className="min-h-screen flex flex-col items-center pt-16 p-4 bg-black relative">
       <div className="w-full max-w-4xl space-y-8 card p-10 rounded-xl"> {/* Increased width from 3xl to 4xl */}
         <div>
           <h2 className="text-4xl font-bold text-center mb-2">Quiz Summary</h2> {/* Increased font size */}
-          <h3 className="text-xl text-center text-blue-400 mb-8">{quizTitle}</h3> {/* Added subheader */}
+          {showTitle && <h3 className="text-xl text-center text-blue-400 mb-8">{quizTitle}</h3>} {/* Only show when not Unknown */}
         </div>
         
         <div className="flex items-center justify-between mb-8 hide-selection"> {/* Increased margin */}
