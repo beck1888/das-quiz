@@ -22,12 +22,14 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { question, correctAnswer } = await req.json();
+    const { question, correctAnswer, answerChoices } = await req.json();
     const configs = getConfigs();
 
+    const answerChoicesString = answerChoices.join(', ');
     const prompt = configs.prompts.hint
       .replace('{question}', question)
-      .replace('{correctAnswer}', correctAnswer);
+      .replace('{correctAnswer}', correctAnswer)
+      .replace('{answerChoicesString}', answerChoicesString);
 
     const stream = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],

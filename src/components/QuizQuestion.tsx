@@ -68,16 +68,19 @@ export default function QuizQuestion({
     setLoadingExplanation(false);
   };
 
-  const getHint = async () => {
+  const handleHintClick = async () => {
     setLoadingHint(true);
     setHint('');
     try {
       const response = await fetch('/api/hint', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           question: question.question,
           correctAnswer: question.correctAnswer,
+          answerChoices: shuffledAnswers,
         }),
       });
 
@@ -140,7 +143,7 @@ export default function QuizQuestion({
 
           <div className="flex justify-between mt-4">
             <button
-              onClick={showAnswer ? getExplanation : getHint}
+              onClick={showAnswer ? getExplanation : handleHintClick}
               disabled={showAnswer ? (loadingExplanation || !!explanation) : (loadingHint || !!hint)}
               className={`h-9 px-4 rounded border border-white/20 flex items-center justify-center gap-2 transition-all min-w-[100px] ${
                 (!showAnswer && (!!hint || loadingHint)) || (showAnswer && (!!explanation || loadingExplanation))

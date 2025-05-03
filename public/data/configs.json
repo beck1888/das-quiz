@@ -7,9 +7,12 @@
   "prompts": {
     "quiz": "Create a quiz with {numQuestions} multiple choice questions about \"{topic}\" at {difficulty} difficulty level. Return a JSON object with an array of questions. Each question should have:\n- A question text (make it {difficulty} difficulty)\n- One correct answer\n- Three plausible but incorrect answers\nFormat: { \"questions\": [{ \"question\": \"\", \"correctAnswer\": \"\", \"incorrectAnswers\": [\"\",\"\",\"\"] }] }",
 
-    "explanation": "The user was asked: {question}\nCorrect answer: {correctAnswer}\nUser's answer: {userAnswer}\n\nIf the user's answer is correct, briefly explain why it's right. If it's incorrect, explain why the correct answer is right and why the user's answer is wrong. Use simple, clear language. Limit the explanation to two sentences. Reference details from the question and include only helpful context.",
+    "explanation": {
+      "user_correct": "I was asked this question: {question}.\nI said: {correctAnswer}\nMy answer is correct, but I don't understand why. Please explain why I am correct in a few sentences. Use simple and easy to underhand sentences. Please give context if it helps.",
+      "user_wrong": "I was asked this question: {question}.\nThe correct answer was: {correctAnswer}.\nI said: {userAnswer}.\nI don't understand why my response is incorrect. In two to three sentence please explain why the correct answer is what it is and why my answer is incorrect. Use simple and easy to underhand sentences. Please give context if it helps."
+    },
 
-    "hint": "Question: \"{question}\"\nCorrect answer: \"{correctAnswer}\"\n\nWrite a helpful hint that gently guides the user toward the correct answer without revealing it. Keep it to one short sentence and phrase it as a question that nudges them to recall the relevant concept or context."
+    "hint": "I was asked this multiple-choice question: {question}\nThe correct answer is: {correctAnswer}\nThe answer choices are: {answerChoicesString}\n\nWithout revealing the answer, please write a short, helpful hint to guide me toward the correct answer in case I don't know it. This is not a clue for someone who already knows—it should help me reason my way to the answer using:\n- Context from the question\n- Nuances in the answer choices\n- Relevant background knowledge\n\nDo not state or give away the answer. The hint should steer me in the right direction, helping me think critically, recall key ideas, or eliminate wrong answers."
   },
   "settings": {
     "questions": {

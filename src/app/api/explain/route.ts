@@ -25,10 +25,13 @@ export async function POST(req: Request) {
     const { question, correctAnswer, userAnswer } = await req.json();
     const configs = getConfigs();
 
-    const prompt = configs.prompts.explanation
+    const isCorrect = userAnswer === correctAnswer;
+    const promptTemplate = isCorrect ? configs.prompts.explanation.user_correct : configs.prompts.explanation.user_wrong;
+    
+    const prompt = promptTemplate
       .replace('{question}', question)
       .replace('{correctAnswer}', correctAnswer)
-      .replace('{userAnswer}', userAnswer);
+      .replace('{userAnswer}', userAnswer || '');
 
     const stream = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
@@ -46,7 +49,7 @@ export async function POST(req: Request) {
           }
         }
         controller.close();
-      },
+      }
     });
 
     return new Response(customStream, {
