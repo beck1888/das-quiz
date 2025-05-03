@@ -202,11 +202,11 @@ export default function Home() {
           AI generated. For reference only.
         </span>
         <div className="text-center space-y-4 p-8 rounded-xl">
-          <div className="w-64 h-64 mx-auto">
+        <p className="text-4xl text-white font-bold">Generating your quiz...</p>
+          <div className="w-80 h-80 mx-auto">
             <Lottie animationData={loaderAnimation} loop={true} />
           </div>
-          <p className="text-xl text-white">Generating your quiz...</p>
-          <p className="text-gray-400">Please stay on this page.</p>
+          {/* <p className="text-gray-400">Please stay on this page.</p> */}
         </div>
       </div>
     );
