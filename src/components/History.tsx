@@ -97,7 +97,10 @@ export default function History({ onViewQuiz, onPlayQuiz }: HistoryProps) {
 
   const handlePlay = (entry: HistoryEntry, e: React.MouseEvent) => {
     e.stopPropagation();
-    onPlayQuiz(entry);
+    onPlayQuiz({
+      ...entry,
+      id: entry.id // Make sure we preserve the quiz ID
+    });
     setIsOpen(false);
   };
 

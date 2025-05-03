@@ -164,21 +164,30 @@ export default function Home() {
         };
       });
 
-      // Get previous quiz result for the same topic if it exists
-      quizDb.getQuizHistory().then(history => {
-        const lastQuiz = history.find(q => q.topic === quiz.topic && q.difficulty === quiz.difficulty);
+      // Check if we are replaying an existing quiz
+      const storedQuizId = localStorage.getItem('currentQuizId');
+      
+      if (storedQuizId) {
+        // We're replaying an existing quiz, update it instead of creating a new one
+        const quizId = parseInt(storedQuizId);
         
-        quizDb.addQuizResult({
+        quizDb.updateQuizResult(quizId, {
           timestamp: Date.now(),
-          topic: quiz.topic || 'Unknown',
-          difficulty: quiz.difficulty || 'standard',
           score,
-          lastScore: lastQuiz?.score,
-          totalQuestions: quiz.questions.length,
           answers: answersWithOptions,
           attempt
+        }).then(() => {
+          // Clear the stored ID after updating
+          localStorage.removeItem('currentQuizId');
+        }).catch(error => {
+          console.error('Failed to update quiz:', error);
+          // If update fails, create a new entry as fallback
+          addNewQuizEntry(score, answersWithOptions);
         });
-      });
+      } else {
+        // This is a new quiz, create a new entry
+        addNewQuizEntry(score, answersWithOptions);
+      }
 
       if (isSoundEnabled) {
         const audio = new Audio('/sounds/level-up.mp3');
@@ -215,6 +224,24 @@ export default function Home() {
     }
   }, [showSummary, answers, attempt, quiz, isSoundEnabled]);
 
+  // Helper function to add a new quiz entry
+  const addNewQuizEntry = async (score: number, answersWithOptions: any[]) => {
+    // Get previous quiz result for the same topic if it exists
+    const history = await quizDb.getQuizHistory();
+    const lastQuiz = history.find(q => q.topic === quiz?.topic && q.difficulty === quiz?.difficulty);
+    
+    quizDb.addQuizResult({
+      timestamp: Date.now(),
+      topic: quiz?.topic || 'Unknown',
+      difficulty: quiz?.difficulty || 'standard',
+      score,
+      lastScore: lastQuiz?.score,
+      totalQuestions: quiz?.questions.length || 0,
+      answers: answersWithOptions,
+      attempt
+    });
+  };
+
   // Update clear data functionality
   const clearAllData = async () => {
     await quizDb.deleteAllHistory();
@@ -229,6 +256,7 @@ export default function Home() {
   };
 
   const handlePlayQuiz = (entry: { 
+    id?: number,
     topic: string, 
     difficulty: string, 
     answers: {
@@ -243,6 +271,9 @@ export default function Home() {
     totalQuestions: number,
     score: number
   }) => {
+    // Store the quiz ID if it exists
+    const quizId = entry.id;
+    
     // Reconstruct quiz from history entry using stored incorrect answers
     const questions: Question[] = entry.answers.map(answer => ({
       question: answer.question,
@@ -266,6 +297,11 @@ export default function Home() {
     setShowAnswer(false);
     setPreviousScores([entry.score]); // Set the previous score
     setAttempt(1);
+    
+    // Store the original quiz ID to update it later
+    if (quizId) {
+      localStorage.setItem('currentQuizId', quizId.toString());
+    }
     
     // Set up first question's shuffled answers
     if (reconstructedQuiz.questions[0]) {

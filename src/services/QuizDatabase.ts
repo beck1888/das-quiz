@@ -62,6 +62,38 @@ export class QuizDatabase {
     });
   }
 
+  async updateQuizResult(id: number, quiz: Partial<Omit<QuizHistoryEntry, 'id'>>): Promise<void> {
+    const db = await this.initDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(this.STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(this.STORE_NAME);
+      
+      // First get the existing quiz
+      const getRequest = store.get(id);
+      
+      getRequest.onsuccess = () => {
+        if (!getRequest.result) {
+          reject(new Error(`Quiz with id ${id} not found`));
+          return;
+        }
+        
+        // Merge existing quiz with new data
+        const updatedQuiz = {
+          ...getRequest.result,
+          ...quiz,
+          id // Ensure ID is preserved
+        };
+        
+        // Update the quiz
+        const updateRequest = store.put(updatedQuiz);
+        updateRequest.onsuccess = () => resolve();
+        updateRequest.onerror = () => reject(updateRequest.error);
+      };
+      
+      getRequest.onerror = () => reject(getRequest.error);
+    });
+  }
+
   async getQuizHistory(): Promise<QuizHistoryEntry[]> {
     const db = await this.initDB();
     return new Promise((resolve, reject) => {
@@ -72,6 +104,11 @@ export class QuizDatabase {
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
+  }
+
+  async getQuizByTopicAndDifficulty(topic: string, difficulty: string): Promise<QuizHistoryEntry | null> {
+    const quizzes = await this.getQuizHistory();
+    return quizzes.find(quiz => quiz.topic === topic && quiz.difficulty === difficulty) || null;
   }
 
   async deleteAllHistory(): Promise<void> {
