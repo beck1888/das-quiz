@@ -1,0 +1,5 @@
+this should all go in proper readme credits later, but for now
+
+twemojis for the emojis
+bootstrap cions for the icons
+various pixabay sources for the audio

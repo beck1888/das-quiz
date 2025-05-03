@@ -191,16 +191,6 @@ export default function Home() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black relative">
-        <Image
-          src="/icons/static/header.png"
-          alt="Header"
-          width={150}
-          height={50}
-          className="fixed top-4 left-4 z-50"
-        />
-        <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
-          AI generated. For reference only.
-        </span>
         <div className="text-center space-y-4 p-8 rounded-xl">
         <p className="text-4xl text-white font-bold">Generating your quiz...</p>
           <div className="w-80 h-80 mx-auto">
@@ -231,16 +221,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
-      <Image
-        src="/icons/static/header.png"
-        alt="Header"
-        width={150}
-        height={50}
-        className="fixed top-4 left-4 z-50"
-      />
-      <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
-        AI generated. For reference only.
-      </span>
       <QuizQuestion
         question={quiz.questions[currentQuestion]}
         currentQuestion={currentQuestion}

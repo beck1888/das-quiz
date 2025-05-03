@@ -26,16 +26,6 @@ export default function QuizSummary({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
-      <Image
-        src="/icons/static/header.png"
-        alt="Header"
-        width={150}
-        height={50}
-        className="fixed top-4 left-4 z-50"
-      />
-      <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
-        AI generated. For reference only.
-      </span>
       <div className="w-full max-w-2xl space-y-6 card p-8 rounded-xl">
         <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
         

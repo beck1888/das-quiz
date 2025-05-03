@@ -34,16 +34,6 @@ export default function QuizForm({ onSubmit, loading, config }: QuizFormProps) {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
-      <Image
-        src="/icons/static/header.png"
-        alt="Header"
-        width={150}
-        height={50}
-        className="fixed top-4 left-4 z-50"
-      />
-      <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
-        AI generated. For reference only.
-      </span>
       <form onSubmit={handleSubmit} className="w-full max-w-md p-8 rounded-lg border border-white/30 bg-black/90 backdrop-blur-sm shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
         <h2 className="text-2xl font-bold text-center mb-8">Create Quiz</h2>
         <div className="space-y-4">
