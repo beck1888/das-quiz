@@ -85,4 +85,16 @@ export class QuizDatabase {
       request.onerror = () => reject(request.error);
     });
   }
+
+  async deleteQuiz(id: number): Promise<void> {
+    const db = await this.initDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction(this.STORE_NAME, 'readwrite');
+      const store = transaction.objectStore(this.STORE_NAME);
+      const request = store.delete(id);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
 }

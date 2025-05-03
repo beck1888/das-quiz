@@ -69,9 +69,24 @@ export default function History({ onViewQuiz, onPlayQuiz }: HistoryProps) {
     };
   }, [isOpen]);
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString() + ' ' + 
-           new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const formatRelativeTime = (timestamp: number) => {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+
+    if (seconds < 60) return `Made ${seconds}s ago`;
+    if (minutes < 60) return `Made ${minutes}m ago`;
+    if (hours < 24) return `Made ${hours}h ago`;
+    if (days < 7) return `Made ${days}d ago`;
+    if (weeks < 4) return `Made ${weeks}w ago`;
+    if (months < 12) return `Made ${months}mo ago`;
+    return `Made ${years}y ago`;
   };
 
   const handleView = (entry: HistoryEntry, e: React.MouseEvent) => {
@@ -84,6 +99,18 @@ export default function History({ onViewQuiz, onPlayQuiz }: HistoryProps) {
     e.stopPropagation();
     onPlayQuiz(entry);
     setIsOpen(false);
+  };
+
+  const handleDelete = async (entry: HistoryEntry, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!entry.id) return;
+    
+    try {
+      await quizDb.deleteQuiz(entry.id);
+      await loadHistory(); // Refresh the list
+    } catch (error) {
+      console.error('Failed to delete quiz:', error);
+    }
   };
 
   return (
@@ -131,42 +158,50 @@ export default function History({ onViewQuiz, onPlayQuiz }: HistoryProps) {
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="text-lg font-semibold text-gray-200">{entry.topic}</h3>
-                          <p className="text-sm text-gray-400">{formatDate(entry.timestamp)}</p>
-                          <div className="flex gap-2 mt-2">
-                            <button
-                              onClick={(e) => handleView(entry, e)}
-                              className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center gap-1"
-                            >
-                              <Image
-                                src="/icons/outline/question-circle.svg"
-                                alt="View"
-                                width={16}
-                                height={16}
-                              />
-                              View
-                            </button>
-                            <button
-                              onClick={(e) => handlePlay(entry, e)}
-                              className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition-colors flex items-center gap-1"
-                            >
-                              <Image
-                                src="/icons/outline/check-square.svg"
-                                alt="Play"
-                                width={16}
-                                height={16}
-                              />
-                              Play
-                            </button>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-semibold text-gray-200">
-                            {entry.score}/{entry.totalQuestions}
-                            <span className="text-sm text-gray-400 ml-2">
-                              ({Math.round((entry.score / entry.totalQuestions) * 100)}%)
-                            </span>
+                          <p className="text-sm text-gray-400">{formatRelativeTime(entry.timestamp)}</p>
+                          <p className="text-sm text-gray-400 mt-1">
+                            Score: {entry.score}/{entry.totalQuestions}
+                            <span className="mx-2">•</span>
+                            Difficulty: {entry.difficulty}
                           </p>
-                          <p className="text-sm text-gray-400">Difficulty: {entry.difficulty}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={(e) => handleDelete(entry, e)}
+                            className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
+                            title="Delete Quiz"
+                          >
+                            <Image
+                              src="/icons/static/trash.svg"
+                              alt="Delete"
+                              width={20}
+                              height={20}
+                            />
+                          </button>
+                          <button
+                            onClick={(e) => handleView(entry, e)}
+                            className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
+                            title="View Quiz Details"
+                          >
+                            <Image
+                              src="/icons/static/binoculars.svg"
+                              alt="View"
+                              width={20}
+                              height={20}
+                            />
+                          </button>
+                          <button
+                            onClick={(e) => handlePlay(entry, e)}
+                            className="p-2 rounded-full hover:bg-gray-700/50 transition-colors"
+                            title="Play Quiz Again"
+                          >
+                            <Image
+                              src="/icons/static/play.svg"
+                              alt="Play"
+                              width={20}
+                              height={20}
+                            />
+                          </button>
                         </div>
                       </div>
 
