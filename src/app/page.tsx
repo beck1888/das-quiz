@@ -612,113 +612,119 @@ export default function Home() {
         AI generated. For reference only.
       </span>
       <div className="w-full max-w-2xl space-y-6 border border-white/20 rounded p-8">
-        <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/{numQuestions}</h2>
-        {quiz.questions && quiz.questions[currentQuestion] ? (
-          <>
-            <p className="text-xl mb-6 select-text">{quiz.questions[currentQuestion].question}</p>
-            <div className="grid grid-cols-2 gap-3 unselectable">
-              {shuffledAnswers.map((answer, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleAnswerSelect(answer)}
-                  disabled={showAnswer}
-                  className={`p-4 text-left rounded transition-colors border ${
-                    showAnswer
-                      ? answer === quiz.questions[currentQuestion].correctAnswer
-                        ? 'bg-green-900/20 border-green-500 text-green-100 cursor-not-allowed'
-                        : answer === selectedAnswer
-                        ? 'bg-red-900/20 border-red-500 text-red-100 cursor-not-allowed'
-                        : 'border-white/20 opacity-50 bg-black cursor-not-allowed'
-                      : 'bg-black border-white/20 hover:bg-gray-800 active:bg-gray-700'
-                  }`}
-                >
-                  {answer}
-                </button>
-              ))}
-            </div>
-          </>
-        ) : (
-          <p>Error loading question</p>
-        )}
-
-        <div className="flex justify-between">
-          <button
-            onClick={showAnswer ? getExplanation : getHint}
-            disabled={showAnswer ? (loadingExplanation || !!explanation) : (loadingHint || !!hint)}
-            className={`h-9 px-4 rounded border border-white/20 flex items-center justify-center gap-2 transition-all min-w-[100px] ${
-              (!showAnswer && (!!hint || loadingHint)) || (showAnswer && (!!explanation || loadingExplanation))
-                ? 'opacity-50 cursor-not-allowed hover:bg-transparent'
-                : 'hover:bg-white/5'
-            }`}
-            title={showAnswer ? "Get explanation" : "Get a hint"}
-          >
-            {showAnswer ? (
-              loadingExplanation ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  <Image
-                    src="/icons/outline/question-circle.svg"
-                    alt="Explain"
-                    width={20}
-                    height={20}
-                    className="w-5 h-5"
-                  />
-                  <span className="text-sm font-medium">Explain</span>
-                </>
-              )
+        <div className={`content-shift ${(hint && !showAnswer) || (showAnswer && explanation) ? 'shifted' : ''}`}>
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-center">Question {currentQuestion + 1}/{numQuestions}</h2>
+            {quiz.questions && quiz.questions[currentQuestion] ? (
+              <>
+                <p className="text-xl mb-6 select-text">{quiz.questions[currentQuestion].question}</p>
+                <div className="grid grid-cols-2 gap-3 unselectable">
+                  {shuffledAnswers.map((answer, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleAnswerSelect(answer)}
+                      disabled={showAnswer}
+                      className={`p-4 text-left rounded transition-colors border ${
+                        showAnswer
+                          ? answer === quiz.questions[currentQuestion].correctAnswer
+                            ? 'bg-green-900/20 border-green-500 text-green-100 cursor-not-allowed'
+                            : answer === selectedAnswer
+                            ? 'bg-red-900/20 border-red-500 text-red-100 cursor-not-allowed'
+                            : 'border-white/20 opacity-50 bg-black cursor-not-allowed'
+                          : 'bg-black border-white/20 hover:bg-gray-800 active:bg-gray-700'
+                      }`}
+                    >
+                      {answer}
+                    </button>
+                  ))}
+                </div>
+              </>
             ) : (
-              loadingHint ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <>
-                  <Image
-                    src="/icons/outline/lightbulb.svg"
-                    alt="Hint"
-                    width={20}
-                    height={20}
-                    className="w-5 h-5"
-                  />
-                  <span className="text-sm font-medium">Hint</span>
-                </>
-              )
+              <p>Error loading question</p>
             )}
-          </button>
-          <button
-            onClick={handleNext}
-            className={`h-9 px-4 rounded flex items-center justify-center gap-2 transition-all ml-auto min-w-[100px] ${
-              showAnswer 
-                ? 'bg-white text-black hover:opacity-90' 
-                : 'border border-white/40 hover:bg-white/10'
-            }`}
-            title={showAnswer ? "Next question" : "Skip question"}
-          >
-            <Image
-              src={`/icons/${showAnswer ? 'outline/check-square' : 'outline/x-square'}.svg`}
-              alt={showAnswer ? "Next" : "Skip"}
-              width={20}
-              height={20}
-              className="w-5 h-5"
-            />
-            <span className="text-sm font-medium">{showAnswer ? 'Next' : 'Skip'}</span>
-          </button>
+
+            <div className="flex justify-between">
+              <button
+                onClick={showAnswer ? getExplanation : getHint}
+                disabled={showAnswer ? (loadingExplanation || !!explanation) : (loadingHint || !!hint)}
+                className={`h-9 px-4 rounded border border-white/20 flex items-center justify-center gap-2 transition-all min-w-[100px] ${
+                  (!showAnswer && (!!hint || loadingHint)) || (showAnswer && (!!explanation || loadingExplanation))
+                    ? 'opacity-50 cursor-not-allowed hover:bg-transparent'
+                    : 'hover:bg-white/5'
+                }`}
+                title={showAnswer ? "Get explanation" : "Get a hint"}
+              >
+                {showAnswer ? (
+                  loadingExplanation ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <Image
+                        src="/icons/outline/question-circle.svg"
+                        alt="Explain"
+                        width={20}
+                        height={20}
+                        className="w-5 h-5"
+                      />
+                      <span className="text-sm font-medium">Explain</span>
+                    </>
+                  )
+                ) : (
+                  loadingHint ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <Image
+                        src="/icons/outline/lightbulb.svg"
+                        alt="Hint"
+                        width={20}
+                        height={20}
+                        className="w-5 h-5"
+                      />
+                      <span className="text-sm font-medium">Hint</span>
+                    </>
+                  )
+                )}
+              </button>
+              <button
+                onClick={handleNext}
+                className={`h-9 px-4 rounded flex items-center justify-center gap-2 transition-all ml-auto min-w-[100px] ${
+                  showAnswer 
+                    ? 'bg-white text-black hover:opacity-90' 
+                    : 'border border-white/40 hover:bg-white/10'
+                }`}
+                title={showAnswer ? "Next question" : "Skip question"}
+              >
+                <Image
+                  src={`/icons/${showAnswer ? 'outline/check-square' : 'outline/x-square'}.svg`}
+                  alt={showAnswer ? "Next" : "Skip"}
+                  width={20}
+                  height={20}
+                  className="w-5 h-5"
+                />
+                <span className="text-sm font-medium">{showAnswer ? 'Next' : 'Skip'}</span>
+              </button>
+            </div>
+          </div>
         </div>
 
-        {hint && !showAnswer && (
-          <InfoBox title="Hint" className="mt-4">
-            {hint}
-          </InfoBox>
-        )}
-        
-        {showAnswer && (
-          <div className="mt-4">
-            {explanation ? (
+        <div className="relative">
+          {hint && !showAnswer && (
+            <div className="slide-up-enter">
+              <InfoBox title="Hint">
+                {hint}
+              </InfoBox>
+            </div>
+          )}
+          
+          {showAnswer && explanation && (
+            <div className="slide-up-enter">
               <InfoBox title="Explanation">
                 {explanation}
               </InfoBox>
-            ) : null}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
