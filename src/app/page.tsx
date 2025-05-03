@@ -150,6 +150,24 @@ export default function Home() {
     setSavedQuiz(null);
   };
 
+  // Helper function to add a new quiz entry
+  const addNewQuizEntry = async (score: number, answersWithOptions: Array<Answer & { incorrectAnswers: string[] }>) => {
+    // Get previous quiz result for the same topic if it exists
+    const history = await quizDb.getQuizHistory();
+    const lastQuiz = history.find(q => q.topic === quiz?.topic && q.difficulty === quiz?.difficulty);
+    
+    quizDb.addQuizResult({
+      timestamp: Date.now(),
+      topic: quiz?.topic || 'Unknown',
+      difficulty: quiz?.difficulty || 'standard',
+      score,
+      lastScore: lastQuiz?.score,
+      totalQuestions: quiz?.questions.length || 0,
+      answers: answersWithOptions,
+      attempt
+    });
+  };
+
   useEffect(() => {
     if (showSummary && quiz) {
       const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
@@ -221,25 +239,7 @@ export default function Home() {
         setTimeout(shoot, 400);
       }
     }
-  }, [showSummary, answers, attempt, quiz, isSoundEnabled, quizDb]);
-
-  // Helper function to add a new quiz entry
-  const addNewQuizEntry = async (score: number, answersWithOptions: Array<Answer & { incorrectAnswers: string[] }>) => {
-    // Get previous quiz result for the same topic if it exists
-    const history = await quizDb.getQuizHistory();
-    const lastQuiz = history.find(q => q.topic === quiz?.topic && q.difficulty === quiz?.difficulty);
-    
-    quizDb.addQuizResult({
-      timestamp: Date.now(),
-      topic: quiz?.topic || 'Unknown',
-      difficulty: quiz?.difficulty || 'standard',
-      score,
-      lastScore: lastQuiz?.score,
-      totalQuestions: quiz?.questions.length || 0,
-      answers: answersWithOptions,
-      attempt
-    });
-  };
+  }, [showSummary, answers, attempt, quiz, isSoundEnabled, quizDb, addNewQuizEntry]);
 
   // Update clear data functionality
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
