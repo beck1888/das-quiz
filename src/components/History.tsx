@@ -105,6 +105,9 @@ export default function History({ onViewQuiz, onPlayQuiz }: HistoryProps) {
     e.stopPropagation();
     if (!entry.id) return;
     
+    const confirmed = window.confirm('Are you sure you want to delete this quiz?');
+    if (!confirmed) return;
+    
     try {
       await quizDb.deleteQuiz(entry.id);
       await loadHistory(); // Refresh the list
