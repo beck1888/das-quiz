@@ -221,10 +221,10 @@ export default function Home() {
         setTimeout(shoot, 400);
       }
     }
-  }, [showSummary, answers, attempt, quiz, isSoundEnabled]);
+  }, [showSummary, answers, attempt, quiz, isSoundEnabled, quizDb]);
 
   // Helper function to add a new quiz entry
-  const addNewQuizEntry = async (score: number, answersWithOptions: any[]) => {
+  const addNewQuizEntry = async (score: number, answersWithOptions: Array<Answer & { incorrectAnswers: string[] }>) => {
     // Get previous quiz result for the same topic if it exists
     const history = await quizDb.getQuizHistory();
     const lastQuiz = history.find(q => q.topic === quiz?.topic && q.difficulty === quiz?.difficulty);
@@ -242,12 +242,13 @@ export default function Home() {
   };
 
   // Update clear data functionality
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const clearAllData = async () => {
     await quizDb.deleteAllHistory();
     localStorage.clear();
   };
 
-  const handleViewQuiz = (quizAnswers: Answer[], numQuestions: number) => {
+  const handleViewQuiz = (quizAnswers: Answer[]) => {
     setAnswers(quizAnswers);
     setSavedQuiz(null);
     setShowSummary(true);
