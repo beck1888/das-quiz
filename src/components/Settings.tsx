@@ -1,12 +1,12 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { useSettings } from '@/stores/settings';
 
 export default function Settings() {
   const [isOpen, setIsOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
-  const [forceEnglish, setForceEnglish] = useState(false);
+  const { isSoundEnabled, setIsSoundEnabled, forceEnglish, setForceEnglish } = useSettings();
   const modalRef = useRef<HTMLDivElement>(null);
   const confirmRef = useRef<HTMLDivElement>(null);
 
@@ -48,8 +48,10 @@ export default function Settings() {
   };
 
   const playSound = () => {
-    const audio = new Audio('/sounds/alert.mp3');
-    audio.play();
+    if (isSoundEnabled) {
+      const audio = new Audio('/sounds/alert.mp3');
+      audio.play();
+    }
   };
 
   const ConfirmDialog = () => (

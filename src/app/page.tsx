@@ -8,6 +8,7 @@ import QuizSummary from '@/components/QuizSummary';
 import Lottie from 'lottie-react';
 import loaderAnimation from '../../public/animations/loader.json';
 import Settings from '@/components/Settings';
+import { useSettings } from '@/stores/settings';
 
 interface Config {
   settings: {
@@ -33,6 +34,7 @@ interface Answer {
 }
 
 export default function Home() {
+  const { isSoundEnabled } = useSettings();
   const [config, setConfig] = useState<Config | null>(null);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -86,8 +88,10 @@ export default function Home() {
     const currentQ = quiz!.questions[currentQuestion];
     const isCorrect = answer === currentQ.correctAnswer;
 
-    const audio = new Audio(isCorrect ? '/sounds/right.mp3' : '/sounds/wrong.mp3');
-    audio.play();
+    if (isSoundEnabled) {
+      const audio = new Audio(isCorrect ? '/sounds/right.mp3' : '/sounds/wrong.mp3');
+      audio.play();
+    }
 
     setAnswers(prev => [...prev, {
       question: currentQ.question,
@@ -152,7 +156,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (showSummary) {
+    if (showSummary && isSoundEnabled) {
       const audio = new Audio('/sounds/level-up.mp3');
       audio.play();
 
@@ -186,7 +190,7 @@ export default function Home() {
         setTimeout(shoot, 400);
       }
     }
-  }, [showSummary, answers, attempt, quiz]);
+  }, [showSummary, answers, attempt, quiz, isSoundEnabled]);
 
   if (loading) {
     return (
