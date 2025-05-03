@@ -24,7 +24,7 @@ interface QuizFormProps {
 
 export default function QuizForm({ onSubmit, loading, config }: QuizFormProps) {
   const [topic, setTopic] = useState('');
-  const [numQuestions, setNumQuestions] = useState(config?.settings.questions.default || 3);
+  const [numQuestions, setNumQuestions] = useState(config?.settings.questions.default || 5);
   const [difficulty, setDifficulty] = useState(config?.settings.defaults.difficulty || 'standard');
   const [showTerms, setShowTerms] = useState(false);
 

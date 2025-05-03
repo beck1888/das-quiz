@@ -80,13 +80,13 @@ export default function History({ onViewQuiz, onPlayQuiz }: HistoryProps) {
     const months = Math.floor(days / 30);
     const years = Math.floor(days / 365);
 
-    if (seconds < 60) return `Made ${seconds}s ago`;
-    if (minutes < 60) return `Made ${minutes}m ago`;
-    if (hours < 24) return `Made ${hours}h ago`;
-    if (days < 7) return `Made ${days}d ago`;
-    if (weeks < 4) return `Made ${weeks}w ago`;
-    if (months < 12) return `Made ${months}mo ago`;
-    return `Made ${years}y ago`;
+    if (seconds < 60) return `Created ${seconds}s ago`;
+    if (minutes < 60) return `Created ${minutes}m ago`;
+    if (hours < 24) return `Created ${hours}h ago`;
+    if (days < 7) return `Created ${days}d ago`;
+    if (weeks < 4) return `Created ${weeks}w ago`;
+    if (months < 12) return `Created ${months}mo ago`;
+    return `Created ${years}y ago`;
   };
 
   const handleView = (entry: HistoryEntry, e: React.MouseEvent) => {
