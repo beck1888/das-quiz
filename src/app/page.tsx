@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import confetti from 'canvas-confetti';
 import { Quiz, Question, Answer } from '@/types/quiz';
 import QuizForm from '@/components/QuizForm';
@@ -40,8 +40,26 @@ export default function Home() {
   const [previousScores, setPreviousScores] = useState<number[]>([]);
   const [savedQuiz, setSavedQuiz] = useState<Quiz | null>(null);
 
-  const quizDb = new QuizDatabase();
+  const quizDb = useMemo(() => new QuizDatabase(), []);
   
+  // Helper function to add a new quiz entry
+  const addNewQuizEntry = useCallback(async (score: number, answersWithOptions: Array<Answer & { incorrectAnswers: string[] }>) => {
+    // Get previous quiz result for the same topic if it exists
+    const history = await quizDb.getQuizHistory();
+    const lastQuiz = history.find(q => q.topic === quiz?.topic && q.difficulty === quiz?.difficulty);
+    
+    quizDb.addQuizResult({
+      timestamp: Date.now(),
+      topic: quiz?.topic || 'Unknown',
+      difficulty: quiz?.difficulty || 'standard',
+      score,
+      lastScore: lastQuiz?.score,
+      totalQuestions: quiz?.questions.length || 0,
+      answers: answersWithOptions,
+      attempt
+    });
+  }, [quizDb, quiz, attempt]);
+
   useEffect(() => {
     fetch('/data/configs.json')
       .then(res => res.json())
@@ -148,24 +166,6 @@ export default function Home() {
     setAttempt(1);
     setPreviousScores([]);
     setSavedQuiz(null);
-  };
-
-  // Helper function to add a new quiz entry
-  const addNewQuizEntry = async (score: number, answersWithOptions: Array<Answer & { incorrectAnswers: string[] }>) => {
-    // Get previous quiz result for the same topic if it exists
-    const history = await quizDb.getQuizHistory();
-    const lastQuiz = history.find(q => q.topic === quiz?.topic && q.difficulty === quiz?.difficulty);
-    
-    quizDb.addQuizResult({
-      timestamp: Date.now(),
-      topic: quiz?.topic || 'Unknown',
-      difficulty: quiz?.difficulty || 'standard',
-      score,
-      lastScore: lastQuiz?.score,
-      totalQuestions: quiz?.questions.length || 0,
-      answers: answersWithOptions,
-      attempt
-    });
   };
 
   useEffect(() => {
