@@ -7,10 +7,9 @@ import QuizQuestion from '@/components/QuizQuestion';
 import QuizSummary from '@/components/QuizSummary';
 import Lottie from 'lottie-react';
 import loaderAnimation from '../../public/animations/loader.json';
-import Settings from '@/components/Settings';
 import { useSettings } from '@/stores/settings';
 import { QuizDatabase } from '@/services/QuizDatabase';
-import History from '@/components/History';
+import TopBar from '@/components/TopBar';
 
 interface Config {
   settings: {
@@ -315,10 +314,13 @@ export default function Home() {
 
   return (
     <>
-      <History onViewQuiz={handleViewQuiz} onPlayQuiz={handlePlayQuiz} />
+      <TopBar 
+        onViewQuiz={handleViewQuiz} 
+        onPlayQuiz={handlePlayQuiz} 
+        onHomeClick={startNewQuiz} 
+      />
       {loading ? (
         <div className="min-h-screen flex items-center justify-center bg-black relative">
-          <Settings />
           <div className="text-center space-y-4 p-8 rounded-xl">
             <p className="text-4xl text-white font-bold">Generating your quiz...</p>
             <div className="w-80 h-80 mx-auto">
@@ -328,7 +330,6 @@ export default function Home() {
         </div>
       ) : showSummary ? (
         <>
-          <Settings />
           <QuizSummary
             answers={answers}
             numQuestions={quiz ? quiz.questions.length : answers.length}
@@ -342,12 +343,10 @@ export default function Home() {
         </>
       ) : !quiz ? (
         <>
-          <Settings />
           <QuizForm onSubmit={generateQuiz} loading={loading} config={config} />
         </>
       ) : (
         <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
-          <Settings />
           <QuizQuestion
             question={quiz.questions[currentQuestion]}
             currentQuestion={currentQuestion}
