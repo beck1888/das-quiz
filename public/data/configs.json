@@ -35,7 +35,8 @@
       }
     ],
     "defaults": {
-      "difficulty": "standard"
+      "difficulty": "standard",
+      "questions": 5
     }
   }
 }

@@ -8,6 +8,15 @@ export interface Quiz {
   questions: Question[];
 }
 
+export interface Answer {
+  question: string;
+  userAnswer: string | null;
+  correctAnswer: string;
+  isCorrect: boolean;
+  skipped: boolean;
+  attempt: number;
+}
+
 export interface QuizStats {
   totalQuestions: number;
   grade: number;
