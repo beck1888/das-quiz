@@ -641,77 +641,77 @@ export default function Home() {
                     </button>
                   ))}
                 </div>
+
+                <div className="flex justify-between mt-4">
+                  <button
+                    onClick={showAnswer ? getExplanation : getHint}
+                    disabled={showAnswer ? (loadingExplanation || !!explanation) : (loadingHint || !!hint)}
+                    className={`h-9 px-4 rounded border border-white/20 flex items-center justify-center gap-2 transition-all min-w-[100px] ${
+                      (!showAnswer && (!!hint || loadingHint)) || (showAnswer && (!!explanation || loadingExplanation))
+                        ? 'opacity-50 cursor-not-allowed hover:bg-transparent'
+                        : 'hover:bg-white/5'
+                    }`}
+                    title={showAnswer ? "Get explanation" : "Get a hint"}
+                  >
+                    {showAnswer ? (
+                      loadingExplanation ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <>
+                          <Image
+                            src="/icons/outline/question-circle.svg"
+                            alt="Explain"
+                            width={20}
+                            height={20}
+                            className="w-5 h-5"
+                          />
+                          <span className="text-sm font-medium">Explain</span>
+                        </>
+                      )
+                    ) : (
+                      loadingHint ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <>
+                          <Image
+                            src="/icons/outline/lightbulb.svg"
+                            alt="Hint"
+                            width={20}
+                            height={20}
+                            className="w-5 h-5"
+                          />
+                          <span className="text-sm font-medium">Hint</span>
+                        </>
+                      )
+                    )}
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className={`h-9 px-4 rounded flex items-center justify-center gap-2 transition-all ml-auto min-w-[100px] ${
+                      showAnswer 
+                        ? 'bg-white text-black hover:opacity-90' 
+                        : 'border border-white/40 hover:bg-white/10'
+                    }`}
+                    title={showAnswer ? "Next question" : "Skip question"}
+                  >
+                    <Image
+                      src={`/icons/${showAnswer ? 'outline/check-square' : 'outline/x-square'}.svg`}
+                      alt={showAnswer ? "Next" : "Skip"}
+                      width={20}
+                      height={20}
+                      className="w-5 h-5"
+                    />
+                    <span className="text-sm font-medium">{showAnswer ? 'Next' : 'Skip'}</span>
+                  </button>
+                </div>
               </>
             ) : (
               <p>Error loading question</p>
             )}
-
-            <div className="flex justify-between">
-              <button
-                onClick={showAnswer ? getExplanation : getHint}
-                disabled={showAnswer ? (loadingExplanation || !!explanation) : (loadingHint || !!hint)}
-                className={`h-9 px-4 rounded border border-white/20 flex items-center justify-center gap-2 transition-all min-w-[100px] ${
-                  (!showAnswer && (!!hint || loadingHint)) || (showAnswer && (!!explanation || loadingExplanation))
-                    ? 'opacity-50 cursor-not-allowed hover:bg-transparent'
-                    : 'hover:bg-white/5'
-                }`}
-                title={showAnswer ? "Get explanation" : "Get a hint"}
-              >
-                {showAnswer ? (
-                  loadingExplanation ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <Image
-                        src="/icons/outline/question-circle.svg"
-                        alt="Explain"
-                        width={20}
-                        height={20}
-                        className="w-5 h-5"
-                      />
-                      <span className="text-sm font-medium">Explain</span>
-                    </>
-                  )
-                ) : (
-                  loadingHint ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <Image
-                        src="/icons/outline/lightbulb.svg"
-                        alt="Hint"
-                        width={20}
-                        height={20}
-                        className="w-5 h-5"
-                      />
-                      <span className="text-sm font-medium">Hint</span>
-                    </>
-                  )
-                )}
-              </button>
-              <button
-                onClick={handleNext}
-                className={`h-9 px-4 rounded flex items-center justify-center gap-2 transition-all ml-auto min-w-[100px] ${
-                  showAnswer 
-                    ? 'bg-white text-black hover:opacity-90' 
-                    : 'border border-white/40 hover:bg-white/10'
-                }`}
-                title={showAnswer ? "Next question" : "Skip question"}
-              >
-                <Image
-                  src={`/icons/${showAnswer ? 'outline/check-square' : 'outline/x-square'}.svg`}
-                  alt={showAnswer ? "Next" : "Skip"}
-                  width={20}
-                  height={20}
-                  className="w-5 h-5"
-                />
-                <span className="text-sm font-medium">{showAnswer ? 'Next' : 'Skip'}</span>
-              </button>
-            </div>
           </div>
         </div>
 
-        <div className="relative mt-8">
+        <div className="-mt-4">
           {hint && !showAnswer && (
             <div className="slide-up-enter">
               <InfoBox title="Hint" className="border-yellow-800/50 bg-yellow-950/10">
