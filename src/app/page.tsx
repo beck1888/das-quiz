@@ -336,6 +336,8 @@ export default function Home() {
             attempt={attempt}
             onRetry={retryQuiz}
             onNewQuiz={startNewQuiz}
+            quizTopic={quiz?.topic || 'Unknown'}
+            quizDifficulty={quiz?.difficulty}
           />
         </>
       ) : !quiz ? (

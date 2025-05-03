@@ -9,6 +9,8 @@ interface QuizSummaryProps {
   attempt: number;
   onRetry: () => void;
   onNewQuiz: () => void;
+  quizTopic?: string; // Added to display quiz name
+  quizDifficulty?: string; // Added to display quiz difficulty
 }
 
 export default function QuizSummary({ 
@@ -17,53 +19,63 @@ export default function QuizSummary({
   previousScores, 
   attempt,
   onRetry, 
-  onNewQuiz 
+  onNewQuiz,
+  quizTopic = 'Quiz', // Default value
+  quizDifficulty
 }: QuizSummaryProps) {
   const score = answers.filter(a => a.isCorrect && a.attempt === attempt).length;
   const previousScore = previousScores.length > 0 ? previousScores[previousScores.length - 1] : null;
   const scorePercentage = (score / numQuestions) * 100;
   const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect' | 'skipped'>('all');
 
+  const formattedTopic = quizTopic.charAt(0).toUpperCase() + quizTopic.slice(1);
+  const quizTitle = quizDifficulty 
+    ? `${formattedTopic} (${quizDifficulty.charAt(0).toUpperCase() + quizDifficulty.slice(1)})`
+    : formattedTopic;
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-black relative">
-      <div className="w-full max-w-2xl space-y-6 card p-8 rounded-xl">
-        <h2 className="text-3xl font-bold text-center mb-6">Quiz Summary</h2>
+    <div className="min-h-screen flex flex-col items-center pt-16 p-4 bg-black relative">
+      <div className="w-full max-w-4xl space-y-8 card p-10 rounded-xl"> {/* Increased width from 3xl to 4xl */}
+        <div>
+          <h2 className="text-4xl font-bold text-center mb-2">Quiz Summary</h2> {/* Increased font size */}
+          <h3 className="text-xl text-center text-blue-400 mb-8">{quizTitle}</h3> {/* Added subheader */}
+        </div>
         
-        <div className="flex items-center justify-between mb-6 hide-selection">
+        <div className="flex items-center justify-between mb-8 hide-selection"> {/* Increased margin */}
           {/* Score Ring */}
-          <div className="relative w-32 h-32">
+          <div className="relative w-40 h-40"> {/* Increased size */}
             <svg className="w-full h-full transform -rotate-90">
               <circle
-                cx="64"
-                cy="64"
-                r="58"
+                cx="80"
+                cy="80"
+                r="74"
                 stroke="currentColor"
-                strokeWidth="4"
+                strokeWidth="5"
                 fill="transparent"
                 className="text-gray-800"
               />
               <circle
-                cx="64"
-                cy="64"
-                r="58"
+                cx="80"
+                cy="80"
+                r="74"
                 stroke="currentColor"
-                strokeWidth="4"
+                strokeWidth="5"
                 fill="transparent"
-                strokeDasharray={`${2 * Math.PI * 58}`}
-                strokeDashoffset={`${2 * Math.PI * 58 * (1 - scorePercentage / 100)}`}
+                strokeDasharray={`${2 * Math.PI * 74}`}
+                strokeDashoffset={`${2 * Math.PI * 74 * (1 - scorePercentage / 100)}`}
                 className="text-blue-500 transition-all duration-1000"
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl font-bold">{Math.round(scorePercentage)}%</span>
+              <span className="text-3xl font-bold">{Math.round(scorePercentage)}%</span> {/* Increased font size */}
             </div>
           </div>
 
           {/* Score History */}
-          <div className="flex-1 ml-8">
-            <div className="text-xl">
+          <div className="flex-1 ml-10"> {/* Increased margin */}
+            <div className="text-2xl"> {/* Increased font size */}
               <div>Score: {score}/{numQuestions}</div>
-              <div className="text-sm text-gray-400 mt-2">
+              <div className="text-base text-gray-400 mt-3"> {/* Increased size */}
                 {previousScore !== null ? (
                   <>
                     Previous: {previousScore}/{numQuestions}
@@ -83,7 +95,7 @@ export default function QuizSummary({
           </div>
         </div>
 
-        <div className="flex w-full border-b border-gray-800 mb-6 hide-selection">
+        <div className="flex w-full border-b border-gray-800 mb-8 hide-selection"> {/* Increased margin */}
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 text-sm font-medium relative transition-colors duration-200 ${
@@ -174,35 +186,6 @@ export default function QuizSummary({
               {filter === 'all' && 'No answers available.'}
             </div>
           )}
-        </div>
-        
-        <div className="flex gap-3 w-full mt-6">
-          <button
-            onClick={onRetry}
-            className="flex-1 bg-primary text-white p-3 rounded transition-colors flex items-center justify-center gap-2 border border-white hover:bg-gray-600"
-          >
-            <Image
-              src="/icons/static/redo.svg"
-              alt="Retry"
-              width={20}
-              height={20}
-              className="w-5 h-5"
-            />
-            Try Again
-          </button>
-          <button
-            onClick={onNewQuiz}
-            className="flex-1 bg-white text-black p-3 rounded hover:bg-gray-400 transition-colors flex items-center justify-center gap-2"
-          >
-            <Image
-              src="/icons/static/plus.svg"
-              alt="New Quiz"
-              width={20}
-              height={20}
-              className="w-5 h-5"
-            />
-            Make New Quiz
-          </button>
         </div>
       </div>
     </div>
