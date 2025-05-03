@@ -56,9 +56,9 @@ export default function Settings() {
 
   const ConfirmDialog = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
-      <div ref={confirmRef} className="bg-white p-6 rounded-xl max-w-md w-full border border-gray-200 shadow-xl">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">Confirm Deletion</h3>
-        <p className="text-gray-600 mb-6">Are you sure you want to erase all data? This action cannot be undone.</p>
+      <div ref={confirmRef} className="bg-gray-900 p-6 rounded-xl max-w-md w-full border border-gray-700 shadow-xl">
+        <h3 className="text-xl font-bold text-gray-100 mb-4">Confirm Deletion</h3>
+        <p className="text-gray-300 mb-6">Are you sure you want to erase all data? This action cannot be undone.</p>
         <div className="flex justify-end space-x-4">
           <button
             onClick={(e) => {
@@ -66,14 +66,14 @@ export default function Settings() {
               setShowConfirm(false);
               setIsOpen(false);
             }}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            className="px-4 py-2 text-sm font-medium text-gray-300 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             Cancel
           </button>
           <button
             onClick={async () => {
               await clearAllData();
-              window.location.reload(); // Force reload from server
+              window.location.reload();
             }}
             className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
@@ -103,12 +103,12 @@ export default function Settings() {
 
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div ref={modalRef} className="bg-white p-6 rounded-xl max-w-md w-full max-h-[90vh] flex flex-col border border-gray-200 shadow-xl">
+          <div ref={modalRef} className="bg-gray-900 p-6 rounded-xl max-w-md w-full max-h-[90vh] flex flex-col border border-gray-700 shadow-xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-3xl font-bold text-gray-900">Settings</h2>
+              <h2 className="text-3xl font-bold text-gray-100">Settings</h2>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100"
+                className="text-gray-400 hover:text-gray-200 transition-colors p-2 rounded-full hover:bg-gray-800"
               >
                 <Image
                   src="/icons/static/close.svg"
@@ -121,9 +121,9 @@ export default function Settings() {
             <br />
             <div className="space-y-6 overflow-y-auto flex-1 pr-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="sound" className="text-lg font-semibold text-gray-700">
+                <span className="text-lg font-semibold text-gray-200">
                   Sound
-                </label>
+                </span>
                 <button
                   id="sound"
                   onClick={() => setIsSoundEnabled(!isSoundEnabled)}
@@ -147,15 +147,17 @@ export default function Settings() {
 
               <div>
                 <div className="flex items-center justify-between">
-                  <label htmlFor="force-english" className="text-lg font-semibold text-gray-700">
+                  <span className="text-lg font-semibold text-gray-200">
                     Force English Response
-                  </label>
+                    <span className="ml-2 text-xs text-blue-400">(Coming Soon)</span>
+                  </span>
                   <button
                     id="force-english"
                     onClick={() => setForceEnglish(!forceEnglish)}
+                    disabled
                     className={`relative inline-flex h-8 w-16 items-center rounded transition-colors duration-200 ease-in-out ${
                       forceEnglish ? 'bg-green-500' : 'bg-red-500'
-                    }`}
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     <span className="absolute text-[10px] font-bold text-white left-2">
                       {forceEnglish ? 'ON' : ''}
@@ -170,18 +172,21 @@ export default function Settings() {
                     />
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-gray-400 mt-2">
                   Enable this setting to force English responses regardless of the prompt language.
                 </p>
               </div>
 
-              <div className="pt-4 mt-6 border-t border-gray-200">
-                <h3 className="text-lg font-medium text-red-600 mb-4">Danger Zone</h3>
+              <div className="pt-4 mt-6 border-t border-gray-700">
+                <h3 className="text-lg font-medium text-red-500 mb-4">Danger Zone</h3>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <p className="text-sm font-medium text-gray-700">Erase All Data</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      This will permanently delete all data.
+                    <p className="text-lg font-semibold text-gray-200">
+                      Erase All Data 
+                      <span className="ml-2 text-xs text-blue-400">(Coming Soon)</span>
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      This will permanently delete all data. 
                     </p>
                   </div>
                   <button
