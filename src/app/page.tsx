@@ -537,63 +537,66 @@ export default function Home() {
         <span className="fixed top-4 right-4 z-50 text-xs text-gray-500 select-none border border-gray-800 px-3 py-1 rounded-md bg-black/50">
           AI generated. For reference only.
         </span>
-        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md p-8 rounded">
-          <div className="space-y-2">
-            <label htmlFor="topic" className="block text-sm font-medium text-gray-400 select-none">
-              Topic
-            </label>
-            <input
-              id="topic"
-              type="text"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              placeholder="Enter a topic..."
-              className="w-full p-3 bg-black border border-gray-800 rounded text-white focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-gray-500 select-none"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="w-full max-w-md p-8 rounded-lg border border-white/30 bg-black/90 backdrop-blur-sm shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+          <h2 className="text-2xl font-bold text-center mb-8">Create Quiz</h2>
+          <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="numQuestions" className="block text-sm font-medium text-gray-400 select-none">
-                Number of Questions
+              <label htmlFor="topic" className="block text-sm font-medium text-gray-400 select-none">
+                Topic
               </label>
-              <Select
-                // id="numQuestions"
-                value={numQuestions}
-                onChange={(value) => setNumQuestions(Number(value))}
-                options={
-                  config
-                    ? [...Array(config.settings.questions.max - config.settings.questions.min + 1)].map((_, i) => ({
-                        value: i + config.settings.questions.min,
-                        label: `${i + config.settings.questions.min} Questions`
-                      }))
-                    : []
-                }
+              <input
+                id="topic"
+                type="text"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="Enter a topic..."
+                className="w-full p-3 bg-black border border-white/30 rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary hover:border-white/50 transition-colors placeholder:text-gray-500"
               />
             </div>
-            <div className="space-y-2">
-              <label htmlFor="difficulty" className="block text-sm font-medium text-gray-400 select-none">
-                Difficulty
-              </label>
-              <Select
-                // id="difficulty"
-                value={difficulty}
-                onChange={(value) => setDifficulty(value)}
-                options={
-                  config?.settings.difficulties.map((level: { id: string, label: string }) => ({
-                    value: level.id,
-                    label: level.label
-                  })) || []
-                }
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="numQuestions" className="block text-sm font-medium text-gray-400 select-none">
+                  Number of Questions
+                </label>
+                <Select
+                  // id="numQuestions"
+                  value={numQuestions}
+                  onChange={(value) => setNumQuestions(Number(value))}
+                  options={
+                    config
+                      ? [...Array(config.settings.questions.max - config.settings.questions.min + 1)].map((_, i) => ({
+                          value: i + config.settings.questions.min,
+                          label: `${i + config.settings.questions.min} Questions`
+                        }))
+                      : []
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="difficulty" className="block text-sm font-medium text-gray-400 select-none">
+                  Difficulty
+                </label>
+                <Select
+                  // id="difficulty"
+                  value={difficulty}
+                  onChange={(value) => setDifficulty(value)}
+                  options={
+                    config?.settings.difficulties.map((level: { id: string, label: string }) => ({
+                      value: level.id,
+                      label: level.label
+                    })) || []
+                  }
+                />
+              </div>
             </div>
+            <button
+              type="submit"
+              className="w-full bg-white text-black p-3 rounded disabled:opacity-30 hover:opacity-90 transition-colors font-medium"
+              disabled={loading || !topic || !config}
+            >
+              {loading ? 'Generating...' : 'Generate Quiz'}
+            </button>
           </div>
-          <button
-            type="submit"
-            className="w-full bg-white text-black p-3 rounded disabled:opacity-30 hover:opacity-90 transition-colors font-medium"
-            disabled={loading || !topic || !config}
-          >
-            {loading ? 'Generating...' : 'Generate Quiz'}
-          </button>
         </form>
       </div>
     );
@@ -708,10 +711,10 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative">
+        <div className="relative mt-8">
           {hint && !showAnswer && (
             <div className="slide-up-enter">
-              <InfoBox title="Hint">
+              <InfoBox title="Hint" className="border-yellow-800/50 bg-yellow-950/10">
                 {hint}
               </InfoBox>
             </div>
@@ -719,7 +722,7 @@ export default function Home() {
           
           {showAnswer && explanation && (
             <div className="slide-up-enter">
-              <InfoBox title="Explanation">
+              <InfoBox title="Explanation" className="border-blue-800/50 bg-blue-950/10">
                 {explanation}
               </InfoBox>
             </div>

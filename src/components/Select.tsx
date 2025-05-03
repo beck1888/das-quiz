@@ -30,7 +30,7 @@ export default function Select({ value, onChange, options, className = '' }: Sel
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-2 bg-black border border-gray-800 rounded text-sm text-gray-100 focus:outline-none focus:ring-1 focus:ring-primary flex items-center justify-between"
+        className="w-full p-3 bg-black border border-white/30 rounded-lg text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary hover:border-white/50 transition-colors flex items-center justify-between"
       >
         <span>{selectedLabel}</span>
         <svg
@@ -44,14 +44,14 @@ export default function Select({ value, onChange, options, className = '' }: Sel
       </button>
       
       {isOpen && (
-        <div className="absolute z-10 w-full mt-1 bg-black border border-gray-800 rounded text-sm text-gray-100 max-h-60 overflow-auto [scrollbar-width:none] [-ms-overflow-style:none]" 
+        <div className="absolute z-10 w-full mt-2 bg-black border border-white/30 rounded-lg text-sm text-white max-h-60 overflow-auto [scrollbar-width:none] [-ms-overflow-style:none] shadow-lg" 
           style={{ WebkitOverflowScrolling: 'touch' }}>
           <div className="[&::-webkit-scrollbar]:hidden">
             {options.map((option) => (
               <button
                 key={option.value}
                 type="button"
-                className="w-full px-3 py-2 text-left hover:bg-gray-800 transition-colors"
+                className="w-full px-4 py-3 text-left hover:bg-white/5 transition-colors"
                 onClick={() => {
                   onChange(String(option.value));
                   setIsOpen(false);

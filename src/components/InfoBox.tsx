@@ -8,9 +8,9 @@ interface InfoBoxProps {
 
 export default function InfoBox({ title, children, className = '' }: InfoBoxProps) {
   return (
-    <div className={`card p-4 rounded border border-white/20 bg-white/5 backdrop-blur-sm shadow-[0_0_20px_-5px_rgba(255,255,255,0.2)] ${className}`}>
-      <h3 className="font-medium text-sm text-gray-300 mb-2">{title}</h3>
-      <div className="text-sm text-gray-100">{children}</div>
+    <div className={`p-4 rounded-lg border border-white/30 bg-black/90 backdrop-blur-sm shadow-[0_4px_12px_rgba(0,0,0,0.3)] ${className}`}>
+      <h3 className="font-medium text-sm text-blue-300 mb-3 uppercase tracking-wide">{title}</h3>
+      <div className="text-sm text-gray-100 leading-relaxed">{children}</div>
     </div>
   );
 }

@@ -17,6 +17,11 @@
   --gray-700: #1a1a1a;
   --gray-800: #121212;
   --gray-900: #0a0a0a;
+  
+  /* New contrast border variables */
+  --border-light: rgba(255, 255, 255, 0.3);
+  --border-medium: rgba(255, 255, 255, 0.15);
+  --border-dark: #1a1a1a;
 }
 
 /* Define theme variables using CSS custom properties */
@@ -47,8 +52,9 @@ body {
 /* Card styles */
 .card {
   background: var(--gray-900);
-  border: 1px solid var(--gray-800);
+  border: 1px solid var(--border-medium);
   border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /* Button styles */
@@ -60,6 +66,7 @@ body {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .btn:hover {
@@ -73,7 +80,7 @@ body {
 
 .btn-outline {
   background: transparent;
-  border: 1px solid var(--foreground);
+  border: 1px solid var(--border-light);
   color: var(--foreground);
 }
 
@@ -84,7 +91,7 @@ body {
 /* Tag styles */
 .tag {
   background: var(--gray-800);
-  border: 1px solid var(--gray-700);
+  border: 1px solid var(--border-medium);
   border-radius: 9999px;
   transition: all 0.2s ease;
   color: var(--gray-300);
@@ -93,6 +100,13 @@ body {
 .tag:hover {
   background: var(--gray-700);
   color: var(--foreground);
+}
+
+/* Divider styles */
+.divider {
+  height: 1px;
+  background: var(--border-medium);
+  margin: 1rem 0;
 }
 
 /* Hide text selection color */
