@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { useSettings } from '@/stores/settings';
 import { QuizDatabase } from '@/services/QuizDatabase';
@@ -43,19 +43,20 @@ export default function TopBar({ onViewQuiz, onPlayQuiz, onHomeClick }: TopBarPr
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [selectedQuiz, setSelectedQuiz] = useState<HistoryEntry | null>(null);
   const historyModalRef = useRef<HTMLDivElement>(null);
-  const quizDb = new QuizDatabase();
+  const quizDb = useMemo(() => new QuizDatabase(), []);
+
+  // Define loadHistory with useCallback to maintain referential stability
+  const loadHistory = useCallback(async () => {
+    const quizHistory = await quizDb.getQuizHistory();
+    setHistory(quizHistory.sort((a, b) => b.timestamp - a.timestamp));
+  }, [quizDb]);
 
   // Load history when history modal is opened
   useEffect(() => {
     if (isHistoryOpen) {
       loadHistory();
     }
-  }, [isHistoryOpen]);
-
-  const loadHistory = async () => {
-    const quizHistory = await quizDb.getQuizHistory();
-    setHistory(quizHistory.sort((a, b) => b.timestamp - a.timestamp));
-  };
+  }, [isHistoryOpen, loadHistory]);
 
   // Handle clicks outside the settings modal
   useEffect(() => {

@@ -1,5 +1,3 @@
-import { Answer, Question } from '@/types/quiz';
-
 interface QuizHistoryEntry {
   id?: number;
   timestamp: number;

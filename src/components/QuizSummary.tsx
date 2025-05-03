@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Image from 'next/image';
 import { Answer } from '@/types/quiz';
 
 interface QuizSummaryProps {
@@ -18,8 +17,6 @@ export default function QuizSummary({
   numQuestions, 
   previousScores, 
   attempt,
-  onRetry, 
-  onNewQuiz,
   quizTopic = 'Quiz', // Default value
   quizDifficulty
 }: QuizSummaryProps) {

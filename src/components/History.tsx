@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { QuizDatabase } from '@/services/QuizDatabase';
-import { Quiz } from '@/types/quiz';
 
 interface HistoryEntry {
   id?: number;
@@ -32,18 +31,19 @@ export default function History({ onViewQuiz, onPlayQuiz }: HistoryProps) {
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [selectedQuiz, setSelectedQuiz] = useState<HistoryEntry | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
-  const quizDb = new QuizDatabase();
+  
+  const quizDb = useMemo(() => new QuizDatabase(), []);
+
+  const loadHistory = useCallback(async () => {
+    const quizHistory = await quizDb.getQuizHistory();
+    setHistory(quizHistory.sort((a, b) => b.timestamp - a.timestamp));
+  }, [quizDb]);
 
   useEffect(() => {
     if (isOpen) {
       loadHistory();
     }
-  }, [isOpen]);
-
-  const loadHistory = async () => {
-    const quizHistory = await quizDb.getQuizHistory();
-    setHistory(quizHistory.sort((a, b) => b.timestamp - a.timestamp));
-  };
+  }, [isOpen, loadHistory]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
